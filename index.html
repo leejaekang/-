@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>법인 재무 건강도 간이진단 | 지인회계법인</title>
+<meta name="description" content="재무제표 숫자 몇 개로 외부감사 대상 여부, 가지급금, 기업업무추진비 한도, 주식가치까지 2분 만에 점검합니다. 지인회계법인.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
+<style>
+:root{
+  --ink:#2B2F33;
+  --ink2:#5A6169;
+  --ink3:#8A9199;
+  --verde:#4E8C5A;
+  --verde-deep:#35633F;
+  --verde-wash:#E7EFE7;
+  --paper:#EDEFEA;
+  --card:#FFFFFF;
+  --rule:#CDD2CA;
+  --rule-soft:#E2E5DF;
+  --ochre:#96721C;
+  --ochre-wash:#F5EEDC;
+  --brick:#9E3B36;
+  --brick-wash:#F6E7E5;
+  --serif:'Gowun Batang', 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif;
+  --sans:'Pretendard Variable', Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--sans);
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.65;
+  font-size:15px;
+  letter-spacing:-0.01em;
+  padding:0 0 64px;
+}
+.wrap{max-width:660px;margin:0 auto;padding:0 18px}
+
+/* ---------- 헤더 ---------- */
+.masthead{padding:44px 0 30px;border-bottom:2px solid var(--ink)}
+.eyebrow{
+  font-size:11px;letter-spacing:.22em;text-transform:none;
+  color:var(--verde-deep);font-weight:700;margin-bottom:14px;
+}
+h1{
+  font-family:var(--serif);font-weight:700;
+  font-size:clamp(27px,7vw,38px);line-height:1.28;letter-spacing:-0.02em;
+}
+.lede{margin-top:14px;color:var(--ink2);font-size:14.5px;max-width:46ch}
+.meta-strip{
+  display:flex;flex-wrap:wrap;gap:6px;margin-top:20px;
+}
+.chip{
+  font-size:11.5px;color:var(--ink2);background:var(--card);
+  border:1px solid var(--rule);border-radius:2px;padding:4px 9px;
+}
+
+/* ---------- 폼 ---------- */
+.sheet{
+  background:var(--card);border:1px solid var(--rule);
+  margin-top:22px;
+}
+.sheet-head{
+  display:flex;align-items:baseline;gap:10px;
+  padding:14px 18px;border-bottom:1px solid var(--rule);
+  background:#FBFCFA;
+}
+.sheet-idx{
+  font-family:var(--serif);font-size:13px;color:var(--verde-deep);
+  font-weight:700;letter-spacing:.06em;
+}
+.sheet-title{font-size:14px;font-weight:600}
+.sheet-note{font-size:11.5px;color:var(--ink3);margin-left:auto}
+.rows{padding:4px 18px 16px}
+.row{
+  display:grid;grid-template-columns:1fr 168px;align-items:center;
+  gap:10px;padding:11px 0;border-bottom:1px dashed var(--rule-soft);
+}
+.row:last-child{border-bottom:none}
+.row label{font-size:13.5px;color:var(--ink);line-height:1.4}
+.row .hint{display:block;font-size:11px;color:var(--ink3);margin-top:2px}
+.field{position:relative;display:flex;align-items:center;justify-content:flex-end}
+input[type=number],select{
+  font-family:var(--sans);font-size:14px;color:var(--ink);
+  width:100%;padding:8px 10px;text-align:right;
+  border:1px solid var(--rule);border-radius:2px;background:#FCFDFB;
+  font-variant-numeric:tabular-nums;
+}
+select{text-align:left}
+input[type=number]:focus,select:focus{
+  outline:2px solid var(--verde);outline-offset:1px;border-color:var(--verde);
+}
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield}
+.unit{font-size:12px;color:var(--ink3);margin-left:6px;flex:0 0 auto}
+.echo{
+  grid-column:1/-1;text-align:right;font-size:11.5px;color:var(--verde-deep);
+  font-variant-numeric:tabular-nums;min-height:0;margin-top:-4px;
+}
+.echo:empty{display:none}
+.checkrow{
+  display:flex;align-items:flex-start;gap:9px;padding:11px 0;
+  border-bottom:1px dashed var(--rule-soft);
+}
+.checkrow:last-child{border-bottom:none}
+.checkrow input{margin-top:3px;width:16px;height:16px;accent-color:var(--verde)}
+.checkrow label{font-size:13.5px;cursor:pointer}
+
+/* ---------- 버튼 ---------- */
+.actions{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap}
+.btn{
+  font-family:var(--sans);font-size:15px;font-weight:600;
+  padding:14px 26px;border-radius:2px;cursor:pointer;border:1px solid var(--ink);
+  background:var(--ink);color:#fff;flex:1 1 auto;min-width:160px;
+  transition:background .15s ease;
+}
+.btn:hover{background:#1B1E21}
+.btn:focus-visible{outline:2px solid var(--verde);outline-offset:2px}
+.btn-ghost{background:transparent;color:var(--ink);border-color:var(--rule);flex:0 0 auto;min-width:0}
+.btn-ghost:hover{background:#E4E7E1}
+.err{
+  margin-top:12px;font-size:13px;color:var(--brick);
+  background:var(--brick-wash);border-left:3px solid var(--brick);padding:10px 13px;
+}
+.err:empty{display:none}
+
+/* ---------- 결과 ---------- */
+#result{margin-top:40px}
+#result[hidden]{display:none}
+.verdict{
+  background:var(--card);border:1px solid var(--ink);
+  padding:26px 20px 22px;position:relative;overflow:hidden;
+}
+.verdict-label{font-size:11.5px;letter-spacing:.2em;color:var(--ink3);font-weight:700}
+.verdict-line{
+  font-family:var(--serif);font-size:clamp(20px,5.4vw,27px);
+  line-height:1.35;margin-top:10px;max-width:22ch;font-weight:700;
+}
+.verdict-sub{margin-top:12px;font-size:13.5px;color:var(--ink2);max-width:34ch}
+.seal{
+  position:absolute;top:22px;right:18px;
+  width:82px;height:82px;border:2.5px solid currentColor;border-radius:3px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transform:rotate(-7deg);opacity:.9;
+}
+.seal::after{
+  content:"";position:absolute;inset:4px;border:1px solid currentColor;border-radius:2px;opacity:.55;
+}
+.seal b{font-family:var(--serif);font-size:19px;font-weight:700;line-height:1.15;letter-spacing:.04em}
+.seal span{font-size:9px;letter-spacing:.13em;margin-top:3px;opacity:.75}
+.seal.s-ok{color:var(--verde-deep)}
+.seal.s-warn{color:var(--ochre)}
+.seal.s-risk{color:var(--brick)}
+@keyframes press{
+  0%{transform:rotate(-7deg) scale(1.75);opacity:0}
+  55%{transform:rotate(-7deg) scale(.93);opacity:1}
+  100%{transform:rotate(-7deg) scale(1);opacity:.9}
+}
+.seal.stamped{animation:press .42s cubic-bezier(.2,.8,.3,1) both}
+
+/* 요약 지표 */
+.figures{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  border:1px solid var(--rule);border-top:none;background:var(--card);
+}
+.fig{padding:14px 12px;border-right:1px solid var(--rule-soft);text-align:center}
+.fig:last-child{border-right:none}
+.fig dt{font-size:11px;color:var(--ink3);letter-spacing:.03em}
+.fig dd{
+  font-size:15px;font-weight:700;margin-top:5px;
+  font-variant-numeric:tabular-nums;letter-spacing:-0.02em;
+}
+
+/* 진단 조서 */
+.ledger{margin-top:26px;background:var(--card);border:1px solid var(--rule)}
+.ledger-head{
+  padding:12px 18px;border-bottom:2px solid var(--ink);
+  display:flex;align-items:baseline;gap:10px;
+}
+.ledger-head h2{font-family:var(--serif);font-size:15px;font-weight:700}
+.ledger-head span{font-size:11px;color:var(--ink3);margin-left:auto}
+.item{padding:16px 18px;border-bottom:1px solid var(--rule-soft)}
+.item:last-child{border-bottom:none}
+.item-top{display:flex;align-items:baseline;gap:11px}
+.item-idx{
+  font-family:var(--serif);font-size:12px;color:var(--ink3);
+  font-weight:700;flex:0 0 auto;padding-top:1px;
+}
+.item-name{font-size:14.5px;font-weight:600;flex:1 1 auto}
+.tag{
+  flex:0 0 auto;font-size:11px;font-weight:700;padding:3px 8px;border-radius:2px;
+  letter-spacing:.02em;white-space:nowrap;
+}
+.t-ok{background:var(--verde-wash);color:var(--verde-deep)}
+.t-warn{background:var(--ochre-wash);color:var(--ochre)}
+.t-risk{background:var(--brick-wash);color:var(--brick)}
+.item-body{margin-top:9px;padding-left:26px;font-size:13.5px;color:var(--ink2);line-height:1.68}
+.item-body strong{color:var(--ink);font-weight:600}
+.calc{
+  margin-top:9px;font-size:12.5px;color:var(--ink2);
+  background:#F7F9F6;border-left:2px solid var(--rule);padding:9px 12px;
+  font-variant-numeric:tabular-nums;
+}
+.calc div{display:flex;justify-content:space-between;gap:12px;padding:1.5px 0}
+.calc div span:last-child{font-weight:600;color:var(--ink)}
+.calc .tot{border-top:1px solid var(--rule);margin-top:5px;padding-top:5px}
+
+/* CTA */
+.cta{
+  margin-top:26px;background:var(--ink);color:#fff;padding:26px 22px;
+}
+.cta h2{font-family:var(--serif);font-size:19px;font-weight:700;line-height:1.4}
+.cta p{margin-top:11px;font-size:13.5px;color:#C6CBD0;max-width:40ch}
+.cta-links{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.cta-links a{
+  font-size:14px;font-weight:600;text-decoration:none;padding:12px 20px;
+  border-radius:2px;display:inline-block;
+}
+.cta-primary{background:var(--verde);color:#fff}
+.cta-primary:hover{background:#5B9E68}
+.cta-secondary{border:1px solid #5A6169;color:#fff}
+.cta-secondary:hover{background:#3A3F45}
+.cta-firm{margin-top:20px;font-size:12px;color:#8A9199;line-height:1.75}
+
+.disclaimer{
+  margin-top:26px;font-size:11.5px;color:var(--ink3);line-height:1.75;
+  border-top:1px solid var(--rule);padding-top:16px;
+}
+.disclaimer b{color:var(--ink2);font-weight:600}
+
+@media (max-width:560px){
+  .row{grid-template-columns:1fr 132px;gap:8px}
+  .figures{grid-template-columns:1fr;}
+  .fig{border-right:none;border-bottom:1px solid var(--rule-soft);display:flex;
+       justify-content:space-between;align-items:baseline;text-align:left}
+  .fig:last-child{border-bottom:none}
+  .fig dd{margin-top:0}
+  .seal{width:66px;height:66px;top:18px;right:14px}
+  .seal b{font-size:15px}
+  .verdict-line{max-width:15ch}
+}
+@media (prefers-reduced-motion:reduce){
+  .seal.stamped{animation:none}
+  *{transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">지인회계법인 · 공인회계사 이재강</div>
+    <h1>법인 재무 건강도<br>간이진단</h1>
+    <p class="lede">재무제표에서 숫자 여섯 개만 옮겨 적으면, 외부감사 대상 여부부터 가지급금·기업업무추진비 한도·주식가치까지 한 번에 확인합니다.</p>
+    <div class="meta-strip">
+      <span class="chip">2분 소요</span>
+      <span class="chip">입력값 전송 없음</span>
+      <span class="chip">직전 사업연도 기준</span>
+    </div>
+  </header>
+
+  <!-- 회사 개요 -->
+  <section class="sheet">
+    <div class="sheet-head">
+      <span class="sheet-idx">Ⅰ</span>
+      <span class="sheet-title">회사 개요</span>
+    </div>
+    <div class="rows">
+      <div class="row">
+        <label for="industry">주된 업종</label>
+        <div class="field"><select id="industry">
+          <option value="etc">기타</option>
+          <option value="mfg">제조업</option>
+          <option value="trade">도소매업</option>
+          <option value="const">건설업</option>
+          <option value="rent">부동산임대업</option>
+          <option value="svc">서비스업</option>
+        </select></div>
+      </div>
+      <div class="row">
+        <label for="employees">상시 근로자 수<span class="hint">대표이사 제외</span></label>
+        <div class="field"><input type="number" id="employees" min="0" step="1" placeholder="0"><span class="unit">명</span></div>
+      </div>
+      <div class="row">
+        <label for="share">대표이사·특수관계인 지분율 합계</label>
+        <div class="field"><input type="number" id="share" min="0" max="100" step="1" placeholder="0"><span class="unit">%</span></div>
+      </div>
+      <div class="row">
+        <label for="ownerAge">대표이사 연령대</label>
+        <div class="field"><select id="ownerAge">
+          <option value="40">40대 이하</option>
+          <option value="50">50대</option>
+          <option value="60">60대</option>
+          <option value="70">70대 이상</option>
+        </select></div>
+      </div>
+      <div class="checkrow">
+        <input type="checkbox" id="smallBiz" checked>
+        <label for="smallBiz">조세특례제한법상 중소기업에 해당합니다</label>
+      </div>
+      <div class="checkrow">
+        <input type="checkbox" id="converted">
+        <label for="converted">개인사업자에서 법인으로 전환한 지 3년이 지나지 않았습니다</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- 재무 정보 -->
+  <section class="sheet">
+    <div class="sheet-head">
+      <span class="sheet-idx">Ⅱ</span>
+      <span class="sheet-title">재무 정보</span>
+      <span class="sheet-note">단위: 만원</span>
+    </div>
+    <div class="rows">
+      <div class="row">
+        <label for="revenue">매출액</label>
+        <div class="field"><input type="number" id="revenue" min="0" step="1" placeholder="0"></div>
+        <div class="echo" id="e-revenue"></div>
+      </div>
+      <div class="row">
+        <label for="assets">자산총액</label>
+        <div class="field"><input type="number" id="assets" min="0" step="1" placeholder="0"></div>
+        <div class="echo" id="e-assets"></div>
+      </div>
+      <div class="row">
+        <label for="liabilities">부채총액</label>
+        <div class="field"><input type="number" id="liabilities" min="0" step="1" placeholder="0"></div>
+        <div class="echo" id="e-liabilities"></div>
+      </div>
+      <div class="row">
+        <label for="netIncome">당기순이익<span class="hint">손실이면 앞에 - 를 붙여 주세요</span></label>
+        <div class="field"><input type="number" id="netIncome" step="1" placeholder="0"></div>
+        <div class="echo" id="e-netIncome"></div>
+      </div>
+      <div class="row">
+        <label for="advance">대표이사 가지급금<span class="hint">주·임·종 단기채권 포함</span></label>
+        <div class="field"><input type="number" id="advance" min="0" step="1" placeholder="0"></div>
+        <div class="echo" id="e-advance"></div>
+      </div>
+      <div class="row">
+        <label for="ent">기업업무추진비 계상액<span class="hint">구 접대비</span></label>
+        <div class="field"><input type="number" id="ent" min="0" step="1" placeholder="0"></div>
+        <div class="echo" id="e-ent"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="actions">
+    <button class="btn" id="run">진단하기</button>
+    <button class="btn btn-ghost" id="reset">지우기</button>
+  </div>
+  <div class="err" id="err"></div>
+
+  <!-- 결과 -->
+  <div id="result" hidden>
+    <div class="verdict">
+      <div class="verdict-label">종합 판정</div>
+      <div class="verdict-line" id="v-line"></div>
+      <div class="verdict-sub" id="v-sub"></div>
+      <div class="seal" id="v-seal"><b id="v-seal-t"></b><span>간이진단</span></div>
+    </div>
+    <dl class="figures">
+      <div class="fig"><dt>자본총계</dt><dd id="f-equity">-</dd></div>
+      <div class="fig"><dt>부채비율</dt><dd id="f-debt">-</dd></div>
+      <div class="fig"><dt>추정 주식가치</dt><dd id="f-stock">-</dd></div>
+    </dl>
+
+    <section class="ledger">
+      <div class="ledger-head">
+        <h2>진단 조서</h2>
+        <span id="l-date"></span>
+      </div>
+      <div id="items"></div>
+    </section>
+
+    <section class="cta">
+      <h2>확인이 필요한 항목이 있다면,<br>결산 전에 짚는 편이 낫습니다.</h2>
+      <p>진단 결과를 그대로 담아 문의를 보내실 수 있습니다. 어떤 항목이 걸렸는지 미리 알고 상담을 시작합니다.</p>
+      <div class="cta-links">
+        <a class="cta-primary" id="mailBtn" href="#">진단 결과로 문의하기</a>
+        <a class="cta-secondary" href="tel:01066242061">010-6624-2061</a>
+      </div>
+      <div class="cta-firm">
+        지인회계법인 · 서울 강남구<br>
+        공인회계사 이재강 · ljkdlworkd@gmail.com
+      </div>
+    </section>
+  </div>
+
+  <div class="disclaimer">
+    <b>이 진단에 관하여</b><br>
+    입력하신 값은 어디에도 전송되지 않으며, 브라우저 안에서만 계산됩니다. 이 진단은 입력값만을 기초로 한 간이 추정이므로 실제 세무·회계 판단과 다를 수 있습니다. 특히 추정 주식가치는 최근 3년 손익의 가중평균, 영업권, 부동산 보유 여부 등을 반영하지 않은 개략적인 수치이므로 실제 상속세 및 증여세법상 평가액과 상당한 차이가 날 수 있습니다. 외부감사 대상 여부와 성실신고확인 대상 여부도 지배주주 판정, 특수관계 범위 등 추가 확인이 필요합니다. 구체적인 판단은 전문가와 상담하시기 바랍니다.
+  </div>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- 금액 표기 (입력 단위: 만원) ---------- */
+  function fmt(man){
+    if(!isFinite(man)) return "-";
+    var neg = man < 0;
+    var v = Math.round(Math.abs(man));
+    var eok = Math.floor(v / 10000), rest = v % 10000, s = "";
+    if(eok > 0) s += eok.toLocaleString("ko-KR") + "억";
+    if(rest > 0) s += (eok > 0 ? " " : "") + rest.toLocaleString("ko-KR") + "만";
+    if(!s) s = "0";
+    return (neg ? "-" : "") + s + "원";
+  }
+  function num(id){
+    var el = document.getElementById(id);
+    var v = parseFloat(el.value);
+    return isNaN(v) ? 0 : v;
+  }
+
+  /* ---------- 입력값 실시간 환산 표시 ---------- */
+  ["revenue","assets","liabilities","netIncome","advance","ent"].forEach(function(id){
+    var input = document.getElementById(id);
+    var echo = document.getElementById("e-" + id);
+    input.addEventListener("input", function(){
+      var v = parseFloat(input.value);
+      echo.textContent = (input.value === "" || isNaN(v)) ? "" : fmt(v);
+    });
+  });
+
+  /* ---------- 기준값 (만원 단위) ---------- */
+  var EOK = 10000;          //     1억
+  var W10 = 100000;         //    10억
+  var W30 = 300000;         //    30억
+  var W70 = 700000;         //    70억
+  var W100 = 1000000;       //   100억
+  var W120 = 1200000;       //   120억
+  var W500 = 5000000;       //   500억
+
+  /* ---------- 진단 로직 ---------- */
+  function diagnose(d){
+    var items = [];
+    var equity = d.assets - d.liabilities;
+
+    /* 01. 외부감사 대상 여부 — 외감법 시행령 제5조 제1항 */
+    (function(){
+      var big = d.assets >= W500 || d.revenue >= W500;
+      var flags = [];
+      if(d.assets >= W120) flags.push("자산총액 120억 원 이상");
+      if(d.liabilities >= W70) flags.push("부채총액 70억 원 이상");
+      if(d.revenue >= W100) flags.push("매출액 100억 원 이상");
+      if(d.employees >= 100) flags.push("종업원 100명 이상");
+
+      var body, state;
+      if(big){
+        state = "risk";
+        body = "자산총액 또는 매출액이 500억 원 이상이므로 <strong>외부감사 대상</strong>에 해당합니다. 감사인을 선임하지 않으면 과태료와 증권선물위원회의 감사인 지정 조치가 따를 수 있습니다.";
+      } else if(flags.length >= 2){
+        state = "risk";
+        body = "네 가지 기준 중 <strong>" + flags.length + "개</strong>를 충족하여 <strong>외부감사 대상</strong>에 해당합니다. 해당 항목: " + flags.join(", ") + ".";
+      } else if(flags.length === 1){
+        state = "warn";
+        body = "현재는 대상이 아니지만 <strong>" + flags[0] + "</strong> 한 가지를 이미 충족했습니다. 나머지 기준 중 하나만 더 넘으면 대상이 됩니다. 다음 결산 전에 확인해 두시는 편이 좋습니다.";
+      } else {
+        state = "ok";
+        body = "네 가지 기준 중 어느 것도 충족하지 않아 외부감사 대상에 해당하지 않습니다.";
+      }
+      items.push({name:"외부감사 대상 여부", state:state, body:body, calc:[
+        ["자산총액", fmt(d.assets)],
+        ["매출액", fmt(d.revenue)],
+        ["부채총액", fmt(d.liabilities)],
+        ["종업원 수", d.employees.toLocaleString("ko-KR") + "명"]
+      ]});
+    })();
+
+    /* 02. 가지급금 */
+    (function(){
+      var body, state, calc = null;
+      if(d.advance <= 0){
+        state = "ok";
+        body = "가지급금이 계상되어 있지 않습니다.";
+      } else {
+        var interest = d.advance * 0.046;
+        var ratio = d.assets > 0 ? (d.advance / d.assets * 100) : 0;
+        state = (d.advance >= EOK || ratio >= 5) ? "risk" : "warn";
+        body = "가지급금은 <strong>매년 인정이자가 익금산입</strong>되고, 관련 지급이자는 손금불산입됩니다. 대손처리도 불가능해 시간이 지날수록 정리 비용이 커집니다. 폐업이나 청산 시점까지 남아 있으면 <strong>대표이사 상여로 소득처분</strong>되어 개인 소득세로 넘어갑니다.";
+        calc = [
+          ["가지급금 잔액", fmt(d.advance)],
+          ["자산총액 대비", ratio.toFixed(1) + "%"],
+          ["연 인정이자(4.6% 가정)", fmt(interest), true]
+        ];
+      }
+      items.push({name:"가지급금", state:state, body:body, calc:calc});
+    })();
+
+    /* 03. 재무 안정성 */
+    (function(){
+      var body, state, calc;
+      if(equity <= 0){
+        state = "risk";
+        body = "부채가 자산을 넘어선 <strong>자본잠식</strong> 상태입니다. 금융기관 여신과 입찰 참가 자격에 직접 영향을 줍니다. 결손금 처리와 자본 확충 방안을 함께 검토해야 합니다.";
+        calc = [["자산총액", fmt(d.assets)],["부채총액", fmt(d.liabilities)],["자본총계", fmt(equity), true]];
+      } else {
+        var dr = d.liabilities / equity * 100;
+        if(dr >= 400){ state = "risk"; body = "부채비율이 <strong>400%를 넘습니다.</strong> 차입 구조와 이자비용 부담을 함께 점검하셔야 합니다."; }
+        else if(dr >= 200){ state = "warn"; body = "부채비율이 200%를 넘습니다. 업종에 따라 정상 범위일 수 있으나, 추이를 확인해 두시는 편이 좋습니다."; }
+        else { state = "ok"; body = "부채비율이 200% 미만으로 안정적인 수준입니다."; }
+        calc = [["자본총계", fmt(equity)],["부채총액", fmt(d.liabilities)],["부채비율", dr.toFixed(0) + "%", true]];
+      }
+      items.push({name:"재무 안정성", state:state, body:body, calc:calc});
+    })();
+
+    /* 04. 기업업무추진비 한도 */
+    (function(){
+      var base = d.smallBiz ? 3600 : 1200;
+      var t1 = Math.min(d.revenue, W100) * 0.003;
+      var t2 = Math.max(0, Math.min(d.revenue, W500) - W100) * 0.002;
+      var t3 = Math.max(0, d.revenue - W500) * 0.0003;
+      var limit = base + t1 + t2 + t3;
+      var over = d.ent - limit;
+
+      var body, state;
+      if(d.ent <= 0){
+        state = "ok";
+        body = "계상액이 입력되지 않아 한도만 계산했습니다. 한도는 <strong>" + fmt(limit) + "</strong>입니다.";
+      } else if(over > 0){
+        state = "risk";
+        body = "한도를 <strong>" + fmt(over) + "</strong> 초과했습니다. 초과분은 전액 손금불산입됩니다. 광고선전비나 판매부대비용으로 처리할 수 있는 항목이 섞여 있지 않은지 재분류 검토가 필요합니다.";
+      } else if(d.ent >= limit * 0.9){
+        state = "warn";
+        body = "한도의 90%를 넘겨 사용 중입니다. 남은 여유는 <strong>" + fmt(limit - d.ent) + "</strong>입니다.";
+      } else {
+        state = "ok";
+        body = "한도 이내입니다. 여유분은 <strong>" + fmt(limit - d.ent) + "</strong>입니다.";
+      }
+      var calc = [
+        ["기본한도" + (d.smallBiz ? " (중소기업)" : ""), fmt(base)],
+        ["100억 이하분 × 0.3%", fmt(t1)]
+      ];
+      if(t2 > 0) calc.push(["100~500억분 × 0.2%", fmt(t2)]);
+      if(t3 > 0) calc.push(["500억 초과분 × 0.03%", fmt(t3)]);
+      calc.push(["한도 합계", fmt(limit), true]);
+      if(d.ent > 0) calc.push(["계상액", fmt(d.ent)]);
+      items.push({name:"기업업무추진비 한도", state:state, body:body, calc:calc});
+    })();
+
+    /* 05. 주식가치 및 승계 */
+    (function(){
+      var earnValue = Math.max(0, d.netIncome * 10);   // 순손익가치 (환원율 10% 가정)
+      var weighted = (earnValue * 3 + equity * 2) / 5; // 3:2 가중평균
+      var floor = equity * 0.8;                        // 순자산가치의 80% 하한
+      var value = Math.max(weighted, floor);
+      if(equity <= 0) value = 0;
+      var mine = value * d.share / 100;
+
+      var body, state;
+      if(equity <= 0){
+        state = "ok";
+        body = "자본총계가 0 이하여서 순자산 기준 평가액을 산출하지 않았습니다.";
+      } else if(d.ownerAge >= 60 && mine >= W30){
+        state = "risk";
+        body = "대표이사 보유 지분의 추정 가치가 <strong>" + fmt(mine) + "</strong>입니다. 연령대를 고려하면 승계 계획을 미루기 어려운 구간입니다. 사전증여, 가업상속공제 요건, 지분 이전 시기를 함께 검토하셔야 합니다.";
+      } else if(mine >= W10){
+        state = "warn";
+        body = "대표이사 보유 지분의 추정 가치가 <strong>" + fmt(mine) + "</strong>입니다. 이익이 계속 쌓이면 주식가치도 함께 올라가므로, 배당 정책과 지분 이전 시기를 미리 설계해 두는 편이 유리합니다.";
+      } else {
+        state = "ok";
+        body = "대표이사 보유 지분의 추정 가치는 <strong>" + fmt(mine) + "</strong> 수준입니다.";
+      }
+      var calc = null;
+      if(equity > 0){
+        calc = [
+          ["순손익가치 (순이익 ÷ 10%)", fmt(earnValue)],
+          ["순자산가치", fmt(equity)],
+          ["가중평균 (3:2)", fmt(weighted)],
+          ["평가액 (순자산 80% 하한)", fmt(value)],
+          ["대표이사 지분 " + d.share + "%", fmt(mine), true]
+        ];
+      }
+      items.push({name:"주식가치 및 승계", state:state, body:body, calc:calc});
+    })();
+
+    /* 06. 성실신고확인 대상 — 법인세법 제60조의2 */
+    (function(){
+      var body, state;
+      var c1 = (d.industry === "rent");
+      var c2 = (d.employees < 5);
+      var c3 = (d.share > 50);
+
+      if(d.converted){
+        state = "risk";
+        body = "성실신고확인대상이던 개인사업자가 법인으로 전환한 뒤 <strong>3년 이내</strong>이므로 성실신고확인서 제출대상입니다. 미제출 시 산출세액의 5%와 수입금액의 0.02% 중 큰 금액이 가산세로 부과됩니다.";
+      } else if(c1 && c2 && c3){
+        state = "risk";
+        body = "부동산임대업이 주된 사업이고, 상시근로자 5인 미만, 지배주주 지분 50% 초과라는 <strong>세 요건을 모두 충족</strong>하여 성실신고확인서 제출대상입니다. 대신 신고·납부기한이 4월 30일까지로 한 달 연장되고, 확인비용의 60%를 150만 원 한도로 세액공제받을 수 있습니다.";
+      } else if([c1,c2,c3].filter(Boolean).length === 2){
+        state = "warn";
+        body = "세 요건 중 두 가지를 충족합니다. 나머지 하나가 바뀌면 대상이 됩니다. 이자·배당·부동산임대소득 합계가 매출액의 50% 이상인 경우에도 첫 번째 요건을 충족하므로 확인이 필요합니다.";
+      } else {
+        state = "ok";
+        body = "소규모 법인 세 요건을 함께 충족하지 않아 성실신고확인 대상에 해당하지 않는 것으로 보입니다.";
+      }
+      items.push({name:"성실신고확인 대상", state:state, body:body, calc:[
+        ["부동산임대업 주업", c1 ? "해당" : "해당 없음"],
+        ["상시근로자 5인 미만", c2 ? "해당" : "해당 없음"],
+        ["지배주주 지분 50% 초과", c3 ? "해당" : "해당 없음"]
+      ]});
+    })();
+
+    return {items:items, equity:equity};
+  }
+
+  /* ---------- 렌더링 ---------- */
+  var TAG = {ok:["이상 없음","t-ok"], warn:["검토 권장","t-warn"], risk:["확인 필요","t-risk"]};
+
+  function render(d){
+    var out = diagnose(d);
+    var items = out.items, equity = out.equity;
+    var risks = items.filter(function(i){return i.state === "risk";});
+    var warns = items.filter(function(i){return i.state === "warn";});
+
+    /* 종합 판정 */
+    var seal = document.getElementById("v-seal");
+    var line = document.getElementById("v-line");
+    var sub = document.getElementById("v-sub");
+    seal.className = "seal";
+    if(risks.length > 0){
+      line.textContent = "확인이 필요한 항목이 " + risks.length + "건 있습니다";
+      sub.textContent = risks.map(function(i){return i.name;}).join(" · ") + " 항목을 먼저 살펴보시기 바랍니다.";
+      seal.classList.add("s-risk");
+      document.getElementById("v-seal-t").textContent = "확인要";
+    } else if(warns.length > 0){
+      line.textContent = "당장 급한 항목은 없습니다";
+      sub.textContent = warns.map(function(i){return i.name;}).join(" · ") + " 항목은 다음 결산 전에 한 번 짚어 두시면 좋습니다.";
+      seal.classList.add("s-warn");
+      document.getElementById("v-seal-t").textContent = "검토";
+    } else {
+      line.textContent = "여섯 항목 모두 특이사항이 없습니다";
+      sub.textContent = "입력하신 값 기준으로는 즉시 조치가 필요한 항목이 확인되지 않았습니다.";
+      seal.classList.add("s-ok");
+      document.getElementById("v-seal-t").textContent = "이상無";
+    }
+
+    /* 요약 지표 */
+    document.getElementById("f-equity").textContent = fmt(equity);
+    document.getElementById("f-debt").textContent =
+      equity > 0 ? (d.liabilities / equity * 100).toFixed(0) + "%" : "자본잠식";
+    var st = items[4].calc;
+    document.getElementById("f-stock").textContent = st ? st[st.length-1][1] : "-";
+
+    /* 조서 */
+    var host = document.getElementById("items");
+    host.innerHTML = "";
+    items.forEach(function(it, n){
+      var t = TAG[it.state];
+      var el = document.createElement("div");
+      el.className = "item";
+      var calcHtml = "";
+      if(it.calc){
+        calcHtml = '<div class="calc">' + it.calc.map(function(r){
+          return '<div class="' + (r[2] ? "tot" : "") + '"><span>' + r[0] + '</span><span>' + r[1] + '</span></div>';
+        }).join("") + '</div>';
+      }
+      el.innerHTML =
+        '<div class="item-top">' +
+          '<span class="item-idx">' + String(n+1).padStart(2,"0") + '</span>' +
+          '<span class="item-name">' + it.name + '</span>' +
+          '<span class="tag ' + t[1] + '">' + t[0] + '</span>' +
+        '</div>' +
+        '<div class="item-body">' + it.body + calcHtml + '</div>';
+      host.appendChild(el);
+    });
+
+    /* 진단일 */
+    var now = new Date();
+    document.getElementById("l-date").textContent =
+      now.getFullYear() + "." + String(now.getMonth()+1).padStart(2,"0") + "." + String(now.getDate()).padStart(2,"0") + " 진단";
+
+    /* 문의 메일 본문 */
+    var lines = items.map(function(it,n){
+      return String(n+1).padStart(2,"0") + ". " + it.name + " — " + TAG[it.state][0];
+    }).join("\n");
+    var body =
+      "지인회계법인 담당자님께,\n\n" +
+      "간이진단 결과를 보고 문의드립니다.\n\n" +
+      "[진단 결과]\n" + lines + "\n\n" +
+      "[입력값]\n" +
+      "매출액 " + fmt(d.revenue) + " / 자산총액 " + fmt(d.assets) + " / 부채총액 " + fmt(d.liabilities) + "\n" +
+      "당기순이익 " + fmt(d.netIncome) + " / 가지급금 " + fmt(d.advance) + " / 기업업무추진비 " + fmt(d.ent) + "\n" +
+      "상시근로자 " + d.employees + "명 / 지분율 " + d.share + "%\n\n" +
+      "[문의 내용]\n(여기에 적어 주세요)\n\n" +
+      "회사명 :\n연락처 :\n";
+    document.getElementById("mailBtn").href =
+      "mailto:ljkdlworkd@gmail.com?subject=" + encodeURIComponent("[간이진단] 법인 재무 건강도 진단 결과 문의") +
+      "&body=" + encodeURIComponent(body);
+
+    /* 도장 */
+    var res = document.getElementById("result");
+    res.hidden = false;
+    seal.classList.remove("stamped");
+    void seal.offsetWidth;
+    seal.classList.add("stamped");
+    res.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+
+  /* ---------- 실행 ---------- */
+  document.getElementById("run").addEventListener("click", function(){
+    var err = document.getElementById("err");
+    var d = {
+      industry: document.getElementById("industry").value,
+      employees: num("employees"),
+      share: num("share"),
+      ownerAge: parseInt(document.getElementById("ownerAge").value, 10),
+      smallBiz: document.getElementById("smallBiz").checked,
+      converted: document.getElementById("converted").checked,
+      revenue: num("revenue"),
+      assets: num("assets"),
+      liabilities: num("liabilities"),
+      netIncome: num("netIncome"),
+      advance: num("advance"),
+      ent: num("ent")
+    };
+
+    if(d.assets <= 0){
+      err.textContent = "자산총액을 입력해 주세요. 나머지 항목이 비어 있어도 진단은 진행됩니다.";
+      document.getElementById("assets").focus();
+      return;
+    }
+    if(d.share > 100){
+      err.textContent = "지분율은 100%를 넘을 수 없습니다.";
+      document.getElementById("share").focus();
+      return;
+    }
+    err.textContent = "";
+    render(d);
+  });
+
+  document.getElementById("reset").addEventListener("click", function(){
+    ["employees","share","revenue","assets","liabilities","netIncome","advance","ent"].forEach(function(id){
+      document.getElementById(id).value = "";
+      var e = document.getElementById("e-" + id);
+      if(e) e.textContent = "";
+    });
+    document.getElementById("industry").value = "etc";
+    document.getElementById("ownerAge").value = "40";
+    document.getElementById("smallBiz").checked = true;
+    document.getElementById("converted").checked = false;
+    document.getElementById("err").textContent = "";
+    document.getElementById("result").hidden = true;
+    window.scrollTo({top:0, behavior:"smooth"});
+  });
+})();
+</script>
+</body>
+</html>
