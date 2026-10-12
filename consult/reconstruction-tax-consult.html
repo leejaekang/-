@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>재건축 조합원 세무상담 자료</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* 레이아웃: 한 줄 기둥(본문 46rem) + 상담 메모처럼 읽히는 표·계산 블록, 인쇄해도 흐트러지지 않게 */
+:root{
+  --ink:#2B2F33; --ink2:#5A6169; --ink3:#7E858C;
+  --verde:#4E8C5A; --verde-deep:#35633F; --verde-wash:#E7EFE7;
+  --paper:#EDEFEA; --card:#FFFFFF; --rule:#CDD2CA; --rule-soft:#E2E5DF;
+  --ochre:#96721C; --ochre-wash:#F5EEDC;
+  --brick:#9E3B36; --brick-wash:#F6E7E5;
+  --serif:'Gowun Batang','Nanum Myeongjo','AppleMyungjo',serif;
+  --sans:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --ink:#E4E7E2; --ink2:#B4BAB3; --ink3:#8E958D;
+  --verde:#7DB888; --verde-deep:#A3D2AC;
+  --verde-wash:#213027; --paper:#171A18; --card:#202421; --rule:#3A403B; --rule-soft:#2C312D;
+  --ochre:#D4AE57; --ochre-wash:#332A17; --brick:#E08A84; --brick-wash:#3A2321;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --ink:#E4E7E2; --ink2:#B4BAB3; --ink3:#8E958D;
+  --verde:#7DB888; --verde-deep:#A3D2AC;
+  --verde-wash:#213027; --paper:#171A18; --card:#202421; --rule:#3A403B; --rule-soft:#2C312D;
+  --ochre:#D4AE57; --ochre-wash:#332A17; --brick:#E08A84; --brick-wash:#3A2321;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15.5px;line-height:1.7;-webkit-text-size-adjust:100%}
+.wrap{max-width:48rem;margin:0 auto;padding-inline:16px;padding-block:2.5rem 4rem;display:flex;flex-direction:column;gap:2.75rem}
+h1,h2,h3{font-family:var(--serif);text-wrap:balance;margin:0;line-height:1.35}
+h1{font-size:1.9rem}
+h2{font-size:1.45rem;padding-bottom:.4rem;border-bottom:1.5px solid var(--ink)}
+h3{font-size:1.1rem;margin-top:.5rem}
+p{margin:0}
+.eyebrow{font-size:.75rem;letter-spacing:.12em;color:var(--verde-deep);font-weight:700}
+.meta{color:var(--ink2);font-size:.9rem}
+section{display:flex;flex-direction:column;gap:1rem}
+header{display:flex;flex-direction:column;gap:.6rem}
+.summary{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:1.25rem 1.25rem;display:flex;flex-direction:column;gap:.9rem}
+.summary .q{font-weight:700;color:var(--verde-deep);font-size:.85rem;letter-spacing:.04em}
+.summary .a{font-family:var(--serif);font-size:1.05rem;line-height:1.6}
+.summary > div{display:flex;flex-direction:column;gap:.15rem}
+.summary > div + div{border-top:1px dashed var(--rule);padding-top:.9rem}
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:6px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:34rem;font-size:.9rem;font-variant-numeric:tabular-nums}
+th,td{padding:.6rem .75rem;border-bottom:1px solid var(--rule-soft);text-align:left;vertical-align:top}
+th{background:var(--verde-wash);color:var(--ink);font-weight:700;font-size:.82rem}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;white-space:nowrap}
+.good{color:var(--verde-deep);font-weight:700}
+.bad{color:var(--brick);font-weight:700}
+.note{font-size:.85rem;color:var(--ink2)}
+.callout{border-left:3px solid var(--ochre);background:var(--ochre-wash);padding:.8rem 1rem;border-radius:0 6px 6px 0;font-size:.93rem}
+.callout.red{border-color:var(--brick);background:var(--brick-wash)}
+.callout.green{border-color:var(--verde);background:var(--verde-wash)}
+ul.check{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.7rem}
+ul.check li{display:grid;grid-template-columns:1.6rem 1fr;gap:.4rem;align-items:start}
+ul.check li::before{content:"";width:.9rem;height:.9rem;border:1.5px solid var(--verde-deep);border-radius:2px;margin-top:.35rem}
+ul.check b{color:var(--ink)}
+ol.plain{margin:0;padding-left:1.3rem;display:flex;flex-direction:column;gap:.45rem}
+.timeline{overflow-x:auto;background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:.75rem}
+.timeline svg{display:block;min-width:36rem;width:100%;height:auto}
+.timeline text{font-family:var(--sans)}
+.bars{display:flex;flex-direction:column;gap:.85rem;background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:1rem}
+.bar{display:grid;grid-template-columns:minmax(0,13rem) minmax(0,1fr);gap:.75rem;align-items:center}
+.bar .lab{font-size:.85rem;line-height:1.4}
+.bar .lab small{display:block;color:var(--ink3);font-size:.75rem}
+.track{display:flex;align-items:center;gap:.5rem;min-width:0}
+.fill{height:1.7rem;border-radius:3px;background:var(--verde);flex:none}
+.fill.o{background:var(--ochre)} .fill.r{background:var(--brick)}
+.track span{font-size:.82rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:1rem}
+.grid2 > div{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:1rem;display:flex;flex-direction:column;gap:.5rem;min-width:0}
+.grid2 h3{margin:0}
+footer{font-size:.8rem;color:var(--ink3);border-top:1px solid var(--rule);padding-top:1rem;display:flex;flex-direction:column;gap:.4rem}
+@media (max-width:520px){.bar{grid-template-columns:1fr}.wrap{gap:2.25rem}h1{font-size:1.6rem}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header>
+  <span class="eyebrow">세무상담 준비자료 · 재건축 원조합원</span>
+  <h1>관리처분인가 이후 장기보유특별공제, 그리고 1채 vs 1+1 분양 비교</h1>
+  <p class="meta">기준일 2026.10.12 · 소득세법·종합부동산세법·지방세법·도시정비법 현행 규정 기준 · 사례 수치는 설명용 가정</p>
+</header>
+
+<div class="summary">
+  <div>
+    <span class="q">Q1. 관리처분인가 이후에도 장기보유특별공제가 유지되나요?</span>
+    <p class="a">원조합원이면 유지됩니다. 신축 완공 후 팔 때는 종전주택 취득일부터 보유기간이 이어집니다. 다만 양도차익을 인가 전·후로 나눠서 공제율을 따로 적용하고, 입주권 상태로 팔면 인가 후 프리미엄에는 공제가 없습니다.</p>
+  </div>
+  <div>
+    <span class="q">Q2. 작은 집 2채(1+1)와 큰 집 1채, 나중에 어느 쪽이 세금이 적나요?</span>
+    <p class="a">같은 총자산이라면 세금만 놓고 보면 1채가 유리합니다. 아래 사례에서 양도세는 1채 약 1.8억, 1+1은 약 3.2억~6.0억이고, 보유세도 1+1이 연 220만 원가량 더 나옵니다. 1+1은 임대수익, 자녀 이전, 소형 시세 강세처럼 세금 외 이점이 클 때 선택할 만합니다.</p>
+  </div>
+</div>
+
+<!-- ───────────── Q1 ───────────── -->
+<section id="q1">
+  <h2>1. 관리처분인가 이후 장기보유특별공제</h2>
+
+  <p>관리처분계획인가일부터 종전주택은 세법상 <b>조합원입주권</b>(부동산을 취득할 수 있는 권리)으로 바뀝니다. 그래서 공제가 어떻게 적용되는지는 <b>언제, 어떤 상태로 파느냐</b>에 따라 달라집니다.</p>
+
+  <div class="timeline" role="img" aria-label="종전주택 취득부터 신축 양도까지 장기보유특별공제 보유기간 구간">
+    <svg viewBox="0 0 720 190" xmlns="http://www.w3.org/2000/svg">
+      <line x1="30" y1="70" x2="690" y2="70" stroke="var(--ink2)" stroke-width="2"/>
+      <g fill="var(--ink)" font-size="12">
+        <circle cx="40" cy="70" r="6" fill="var(--verde-deep)"/>
+        <text x="40" y="50" text-anchor="middle" font-weight="700">종전주택 취득</text>
+        <circle cx="300" cy="70" r="6" fill="var(--ochre)"/>
+        <text x="300" y="50" text-anchor="middle" font-weight="700">관리처분인가</text>
+        <circle cx="440" cy="70" r="5" fill="var(--ink3)"/>
+        <text x="440" y="50" text-anchor="middle">멸실·착공</text>
+        <circle cx="560" cy="70" r="5" fill="var(--ink3)"/>
+        <text x="560" y="50" text-anchor="middle">준공·입주</text>
+        <circle cx="680" cy="70" r="6" fill="var(--brick)"/>
+        <text x="680" y="50" text-anchor="middle" font-weight="700">양도</text>
+      </g>
+      <text x="170" y="92" text-anchor="middle" font-size="11" fill="var(--ink2)">주택</text>
+      <text x="430" y="92" text-anchor="middle" font-size="11" fill="var(--ink2)">조합원입주권</text>
+      <text x="620" y="92" text-anchor="middle" font-size="11" fill="var(--ink2)">신축주택</text>
+      <rect x="40" y="112" width="640" height="22" rx="3" fill="var(--verde)" opacity=".85"/>
+      <text x="50" y="127" font-size="11.5" fill="var(--card)" font-weight="700">인가 전 양도차익 ← 종전주택 취득일 ~ 양도일 기간으로 공제율</text>
+      <rect x="300" y="146" width="380" height="22" rx="3" fill="var(--ochre)" opacity=".9"/>
+      <text x="310" y="161" font-size="11.5" fill="var(--card)" font-weight="700">인가 후 양도차익 ← 관리처분인가일 ~ 양도일 기간으로 공제율</text>
+    </svg>
+  </div>
+
+  <h3>양도 시점별 적용 방식</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>파는 시점 / 상태</th><th>장특공 적용 대상</th><th>보유기간 계산</th></tr></thead>
+    <tbody>
+      <tr><td>관리처분인가 전 (주택)</td><td>양도차익 전체</td><td>취득일 ~ 양도일</td></tr>
+      <tr><td>인가 후 ~ 준공 전<br>(조합원입주권 양도)</td><td><b>인가 전 양도차익만</b><br><span class="bad">인가 후 프리미엄은 공제 없음</span></td><td>종전주택 취득일 ~ 관리처분인가일</td></tr>
+      <tr><td>준공 후 신축주택 양도<br>(원조합원)</td><td>인가 전 차익 + 인가 후 차익 <b>각각</b> 공제</td><td>인가 전분: 종전 취득일 ~ 양도일<br>인가 후분: 인가일 ~ 양도일</td></tr>
+      <tr><td>승계조합원<br>(인가 후 입주권 매수)</td><td>신축주택 기준</td><td>신축 취득일(사용승인일 등) ~ 양도일</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">근거: 소득세법 §95②(입주권 양도 시 인가 전 차익 한정), 소득세법 시행령 §166(재건축 신축주택 양도차익·장특공 구분계산). 추가분담금(청산금 납부분)도 인가 후 차익에 포함되어 인가일부터 기간을 셉니다.</p>
+
+  <h3>공제율을 바꾸는 변수</h3>
+  <ul class="check">
+    <li><span><b>1세대1주택 여부 (양도일 기준).</b> 1주택이면 보유 연 4% + 거주 연 4%, 최대 80%(표2). 다주택이면 연 2%, 최대 30%(표1). 1+1을 받으면 신축 완공 후 2주택이 되어 먼저 파는 집은 표1이 적용됩니다.</span></li>
+    <li><span><b>거주기간.</b> 표2는 보유 3년·거주 2년 이상이 요건입니다. 공사기간은 보유기간에는 들어가지만 거주기간에는 들어가지 않습니다. 종전주택 거주기간과 신축 입주 후 거주기간은 합산하는 것으로 보고 계산했습니다.</span></li>
+    <li><span><b>입주권 상태로 파는지, 준공 후 파는지.</b> 준공 전에 팔면 인가 후 상승분 공제가 0이라 세 부담이 크게 다릅니다. 입주권 양도도 인가일 현재 비과세 요건을 갖췄고 다른 주택이 없으면 12억까지 비과세됩니다(소득세법 §89①4호).</span></li>
+    <li><span><b>청산금 납부·수령.</b> 분담금을 내면 그 부분은 인가 후 차익으로 분류됩니다. 청산금을 돌려받으면 그 부분은 종전주택 일부를 판 것으로 보아 수령 시점에 양도세 문제가 생깁니다(1주택이면 비과세 가능).</span></li>
+    <li><span><b>다주택 중과.</b> 조정대상지역 주택을 2주택 이상 상태에서 팔면 기본세율 +20%p(3주택 +30%p)이고 장특공은 아예 배제됩니다. 2025.10.15 대책으로 서울 전역이 조정대상지역이며, 중과 한시배제는 2026.5.9.로 종료됐습니다. <span class="bad">상담 직전 현행 시행령을 한 번 더 확인하세요.</span></span></li>
+    <li><span><b>입주권·분양권의 주택 수 포함.</b> 비과세·중과 판정 시 입주권은 주택 수에 들어갑니다(2021.1.1 이후 취득 분양권도 포함). 공사기간 중 다른 집을 사거나 팔 계획이 있으면 반드시 같이 검토해야 합니다.</span></li>
+    <li><span><b>사업기간 중 대체주택.</b> 사업시행인가일 이후 대체주택을 사서 1년 이상 거주하고, 준공 후 2년 내 신축에 입주하고 대체주택을 팔면 대체주택이 비과세됩니다(소득세법 시행령 §156의2⑤).</span></li>
+    <li><span><b>세법 개정 리스크.</b> 고가 1주택 장특공(특히 보유분) 축소 논의가 나올 수 있으므로, 양도 시점의 법이 적용된다는 점을 고객께 안내합니다.</span></li>
+  </ul>
+</section>
+
+<!-- ───────────── Q2 ───────────── -->
+<section id="q2">
+  <h2>2. 1채로 받을 때 vs 작은 집 2채(1+1)로 받을 때</h2>
+
+  <div class="callout">
+    <b>1+1 분양 요건 (도시정비법 §76①7호 다목).</b> 종전자산 가격 또는 종전 주거전용면적 범위에서 2주택을 받을 수 있고, 그중 1채는 <b>전용 60㎡ 이하</b>여야 합니다. 이 60㎡ 이하 주택은 <b>이전고시일 다음 날부터 3년간</b> 매매·증여 등 권리 변동이 금지됩니다(상속은 예외).
+  </div>
+
+  <h3>세법상 차이 한눈에</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>항목</th><th>1채</th><th>1+1 (2채)</th></tr></thead>
+    <tbody>
+      <tr><td>준공 후 주택 수</td><td>1주택</td><td>2주택</td></tr>
+      <tr><td>먼저 파는 집 양도세</td><td>12억까지 비과세, 초과분 장특공 최대 80%</td><td class="bad">과세. 장특공 최대 30%, 조정지역 중과 시 공제 0 + 20%p</td></tr>
+      <tr><td>일시적 2주택 특례</td><td>해당 없음</td><td>두 채의 취득일이 같아 적용 불가</td></tr>
+      <tr><td>남은 1채 양도</td><td>—</td><td>1주택 비과세·표2 적용. 보유기간은 처음부터 이어짐(2022.5.10 이후 재기산 제도 폐지)</td></tr>
+      <tr><td>종합부동산세</td><td>공제 12억, 고령자·장기보유 세액공제 최대 80%</td><td>공제 9억, 세액공제 없음 (2주택은 일반세율)</td></tr>
+      <tr><td>재산세 공정시장가액비율</td><td>43~45% (1세대1주택)</td><td>60%</td></tr>
+      <tr><td>임대소득</td><td>—</td><td>소형 1채 월세는 과세(2주택자는 전세보증금 간주임대료 없음)</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>사례 가정</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>구분</th><th>내용</th></tr></thead>
+    <tbody>
+      <tr><td>종전주택</td><td>2012.3 취득가 5억, 2012~2024 거주(12년), 서울(조정대상지역)</td></tr>
+      <tr><td>관리처분인가</td><td>2024.6, 권리가액 12억 → 인가 전 양도차익 7억</td></tr>
+      <tr><td>준공·입주</td><td>2028.6 입주 후 계속 거주, 2033.6 양도</td></tr>
+      <tr><td>A. 1채</td><td>분양가 15억(분담금 3억) → 양도가 30억</td></tr>
+      <tr><td>B. 1+1</td><td>84㎡ 분양가 9억(권리 7.2억 + 분담 1.8억) → 양도가 18억, 거주<br>59㎡ 분양가 6억(권리 4.8억 + 분담 1.2억) → 양도가 12억</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">두 안의 총 분양가(15억)와 총 시세(30억)를 같게 두어 세금 차이만 보이게 했습니다. 기타 필요경비·취득세는 무시했고, 종전주택 원가·권리가액은 분양가 비율(60:40)로 나눴습니다.</p>
+
+  <h3>양도소득세 비교 (지방소득세 포함)</h3>
+  <div class="bars" aria-label="시나리오별 양도세 합계 막대">
+    <div class="bar"><div class="lab">A. 1채 (1세대1주택)<small>과세차익 13.2억 · 장특공 8.4억</small></div><div class="track"><div class="fill" style="width:21%"></div><span>1억 8,157만</span></div></div>
+    <div class="bar"><div class="lab">B. 59㎡ 먼저 → 84㎡<small>일반세율 (중과 미적용 시)</small></div><div class="track"><div class="fill o" style="width:37%"></div><span>3억 2,107만</span></div></div>
+    <div class="bar"><div class="lab">B. 84㎡ 먼저 → 59㎡<small>일반세율 (중과 미적용 시)</small></div><div class="track"><div class="fill o" style="width:51%"></div><span>4억 3,707만</span></div></div>
+    <div class="bar"><div class="lab">B. 59㎡ 먼저 → 84㎡<small>59㎡에 조정지역 2주택 중과</small></div><div class="track"><div class="fill r" style="width:70%"></div><span>6억 282만</span></div></div>
+  </div>
+
+  <div class="tbl"><table>
+    <thead><tr><th>시나리오</th><th class="num">양도차익</th><th class="num">과세 차익</th><th class="num">장특공</th><th class="num">세액 합계</th></tr></thead>
+    <tbody>
+      <tr><td>A. 30억 1채 (1주택, 인가 전 80% / 인가 후 56%)</td><td class="num">22.0억</td><td class="num">13.2억</td><td class="num">8.40억</td><td class="num good">1억 8,157만</td></tr>
+      <tr><td>B-1단계. 59㎡ 12억 (2주택, 30% / 18%)</td><td class="num">8.8억</td><td class="num">8.8억</td><td class="num">1.92억</td><td class="num">2억 7,717만</td></tr>
+      <tr><td>　〃 중과 시 (공제 0, +20%p)</td><td class="num">8.8억</td><td class="num">8.8억</td><td class="num">0</td><td class="num bad">5억 5,892만</td></tr>
+      <tr><td>B-2단계. 84㎡ 18억 (1주택, 80% / 56%)</td><td class="num">13.2억</td><td class="num">4.4억</td><td class="num">2.80억</td><td class="num">4,390만</td></tr>
+      <tr><td>B'. 84㎡ 먼저 (2주택) → 59㎡ 12억 비과세</td><td class="num">13.2억</td><td class="num">13.2억</td><td class="num">2.88억</td><td class="num">4억 3,707만</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">장특공률: 인가 전분 보유 21년, 인가 후분 보유 9년(2024.6~2033.6), 거주는 인가 전분 17년, 인가 후분 5년으로 계산. 세율은 2026년 기본세율(6~45%), 기본공제 250만 원 반영.</p>
+
+  <div class="callout green">
+    <b>매도 순서가 중요합니다.</b> 1+1이면 <b>양도차익이 작은 집을 먼저</b> 팔고 큰 집을 1주택 상태로 남기는 쪽이 유리합니다. 소형은 이전고시 후 3년이 지나야 팔거나 증여할 수 있으니, 그 시점이 중과 여부와 맞물리는지 같이 봐야 합니다.
+  </div>
+
+  <h3>보유세 비교 (준공 이듬해, 연간)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>구분</th><th class="num">공시가격</th><th class="num">재산세 계</th><th class="num">종부세 + 농특세</th><th class="num">연간 합계</th></tr></thead>
+    <tbody>
+      <tr><td>A. 1채 (장기보유 50%)</td><td class="num">17.25억</td><td class="num">406만</td><td class="num">62만</td><td class="num good">약 468만</td></tr>
+      <tr><td>A. 1채 (장기 50% + 고령 30%)</td><td class="num">17.25억</td><td class="num">406만</td><td class="num">25만</td><td class="num good">약 431만</td></tr>
+      <tr><td>B. 1+1 단독명의 2주택</td><td class="num">10.35억 + 6.9억</td><td class="num">490만</td><td class="num">202만</td><td class="num bad">약 692만</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">시세 A 25억, B 15억 + 10억, 공시가 현실화율 69% 가정. 재산세 계는 도시지역분·지방교육세 포함. 종부세는 공정시장가액비율 60%, 재산세 중복분은 근사 차감, 세부담상한(재산세 105~130%, 종부세 150%)은 반영하지 않았습니다. 재건축 신축의 종부세 장기보유 공제는 멸실된 종전주택 취득일부터 기산합니다. 공사기간 중에는 주택이 아니라 토지로 재산세가 나옵니다.</p>
+
+  <p>보유세 차이는 <b>연 220만 원 안팎</b>, 10년이면 2천만 원 수준입니다. 양도세 차이(1.4억 이상)에 비하면 작고, 소형 1채 월세 수입으로 상쇄될 수 있습니다.</p>
+
+  <h3>1+1을 고려할 만한 경우</h3>
+  <div class="grid2">
+    <div><h3>임대 현금흐름</h3><p>은퇴 후 소형 1채 월세로 생활비를 마련하려는 경우. 월세 소득세와 건강보험료(지역가입자) 증가도 함께 계산합니다.</p></div>
+    <div><h3>자녀 이전</h3><p>3년 전매제한이 끝난 뒤 소형을 자녀에게 증여하거나 상속 재산을 나누기 쉽습니다. 증여 시 증여세·취득세(조정지역 3억 이상 12%)를 따로 봐야 합니다.</p></div>
+    <div><h3>소형 시세 강세</h3><p>소형 평형의 평당가가 높게 형성되는 단지라면 총자산 증가가 세금 차이를 넘을 수 있습니다.</p></div>
+    <div><h3>1채 쪽이 나은 경우</h3><p>실거주 후 언젠가 한 번에 팔 계획, 고령자 공제를 받을 나이, 다른 주택 취득 가능성이 있는 경우에는 1채가 단순하고 세금도 적습니다.</p></div>
+  </div>
+</section>
+
+<!-- ───────────── 상담 체크리스트 ───────────── -->
+<section id="ask">
+  <h2>3. 상담 때 고객께 확인할 사항</h2>
+  <ol class="plain">
+    <li>종전주택 취득일·취득가액, 실제 거주기간(전입·전출일), 명의(단독·부부 공동)</li>
+    <li>관리처분인가일, 권리가액(감정평가액), 예상 분담금 또는 환급금</li>
+    <li>현재 세대원이 가진 다른 주택·입주권·분양권, 사업기간 중 대체주택 계획</li>
+    <li>신축 입주 여부와 예상 거주기간, 언제 팔 생각인지(입주권 상태 매도 가능성 포함)</li>
+    <li>1+1 신청 시 평형 조합과 예상 분양가, 소형 활용 계획(임대·증여·매도)</li>
+    <li>본인·배우자 나이(종부세 고령자 공제: 60세 20%, 65세 30%, 70세 40%)</li>
+    <li>조합의 분양신청 마감일 (분양신청 이후에는 평형 변경이 어려움)</li>
+  </ol>
+</section>
+
+<footer>
+  <p>이 자료는 상담 설명용 계산 예시이며, 실제 세액은 개별 사실관계와 양도 시점의 세법에 따라 달라집니다. 중과 유예·조정대상지역·장특공 규정은 개정이 잦으므로 신고 전 현행 법령과 유권해석을 확인해야 합니다.</p>
+  <p>주요 근거: 소득세법 §88·§89·§95·§104, 같은 법 시행령 §155·§156의2·§159의4·§166, 종합부동산세법 §8·§9, 지방세법 §111·§111의2, 도시 및 주거환경정비법 §76.</p>
+</footer>
+
+</div>
+</body>
+</html>
