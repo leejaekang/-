@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>잠실5단지 매도·증여 상담</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* 레이아웃: 한 줄 기둥(본문 46rem) + 상담 메모처럼 읽히는 표·계산 블록, 인쇄해도 흐트러지지 않게 */
+:root{
+  --ink:#2B2F33; --ink2:#5A6169; --ink3:#7E858C;
+  --verde:#4E8C5A; --verde-deep:#35633F; --verde-wash:#E7EFE7;
+  --paper:#EDEFEA; --card:#FFFFFF; --rule:#CDD2CA; --rule-soft:#E2E5DF;
+  --ochre:#96721C; --ochre-wash:#F5EEDC;
+  --brick:#9E3B36; --brick-wash:#F6E7E5;
+  --serif:'Gowun Batang','Nanum Myeongjo','AppleMyungjo',serif;
+  --sans:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --ink:#E4E7E2; --ink2:#B4BAB3; --ink3:#8E958D;
+  --verde:#7DB888; --verde-deep:#A3D2AC;
+  --verde-wash:#213027; --paper:#171A18; --card:#202421; --rule:#3A403B; --rule-soft:#2C312D;
+  --ochre:#D4AE57; --ochre-wash:#332A17; --brick:#E08A84; --brick-wash:#3A2321;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --ink:#E4E7E2; --ink2:#B4BAB3; --ink3:#8E958D;
+  --verde:#7DB888; --verde-deep:#A3D2AC;
+  --verde-wash:#213027; --paper:#171A18; --card:#202421; --rule:#3A403B; --rule-soft:#2C312D;
+  --ochre:#D4AE57; --ochre-wash:#332A17; --brick:#E08A84; --brick-wash:#3A2321;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15.5px;line-height:1.7;-webkit-text-size-adjust:100%}
+.wrap{max-width:48rem;margin:0 auto;padding-inline:16px;padding-block:2.5rem 4rem;display:flex;flex-direction:column;gap:2.75rem}
+h1,h2,h3{font-family:var(--serif);text-wrap:balance;margin:0;line-height:1.35}
+h1{font-size:1.9rem}
+h2{font-size:1.45rem;padding-bottom:.4rem;border-bottom:1.5px solid var(--ink)}
+h3{font-size:1.1rem;margin-top:.5rem}
+p{margin:0}
+.eyebrow{font-size:.75rem;letter-spacing:.12em;color:var(--verde-deep);font-weight:700}
+.meta{color:var(--ink2);font-size:.9rem}
+section{display:flex;flex-direction:column;gap:1rem}
+header{display:flex;flex-direction:column;gap:.6rem}
+.summary{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:1.25rem 1.25rem;display:flex;flex-direction:column;gap:.9rem}
+.summary .q{font-weight:700;color:var(--verde-deep);font-size:.85rem;letter-spacing:.04em}
+.summary .a{font-family:var(--serif);font-size:1.05rem;line-height:1.6}
+.summary > div{display:flex;flex-direction:column;gap:.15rem}
+.summary > div + div{border-top:1px dashed var(--rule);padding-top:.9rem}
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:6px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:34rem;font-size:.9rem;font-variant-numeric:tabular-nums}
+th,td{padding:.6rem .75rem;border-bottom:1px solid var(--rule-soft);text-align:left;vertical-align:top}
+th{background:var(--verde-wash);color:var(--ink);font-weight:700;font-size:.82rem}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;white-space:nowrap}
+.good{color:var(--verde-deep);font-weight:700}
+.bad{color:var(--brick);font-weight:700}
+.note{font-size:.85rem;color:var(--ink2)}
+.callout{border-left:3px solid var(--ochre);background:var(--ochre-wash);padding:.8rem 1rem;border-radius:0 6px 6px 0;font-size:.93rem}
+.callout.red{border-color:var(--brick);background:var(--brick-wash)}
+.callout.green{border-color:var(--verde);background:var(--verde-wash)}
+ul.check{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.7rem}
+ul.check li{display:grid;grid-template-columns:1.6rem 1fr;gap:.4rem;align-items:start}
+ul.check li::before{content:"";width:.9rem;height:.9rem;border:1.5px solid var(--verde-deep);border-radius:2px;margin-top:.35rem}
+ul.check b{color:var(--ink)}
+ol.plain{margin:0;padding-left:1.3rem;display:flex;flex-direction:column;gap:.45rem}
+.timeline{overflow-x:auto;background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:.75rem}
+.timeline svg{display:block;min-width:36rem;width:100%;height:auto}
+.timeline text{font-family:var(--sans)}
+.bars{display:flex;flex-direction:column;gap:.85rem;background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:1rem}
+.bar{display:grid;grid-template-columns:minmax(0,13rem) minmax(0,1fr);gap:.75rem;align-items:center}
+.bar .lab{font-size:.85rem;line-height:1.4}
+.bar .lab small{display:block;color:var(--ink3);font-size:.75rem}
+.track{display:flex;align-items:center;gap:.5rem;min-width:0}
+.fill{height:1.7rem;border-radius:3px;background:var(--verde);flex:none}
+.fill.o{background:var(--ochre)} .fill.r{background:var(--brick)}
+.track span{font-size:.82rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:1rem}
+.grid2 > div{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:1rem;display:flex;flex-direction:column;gap:.5rem;min-width:0}
+.grid2 h3{margin:0}
+footer{font-size:.8rem;color:var(--ink3);border-top:1px solid var(--rule);padding-top:1rem;display:flex;flex-direction:column;gap:.4rem}
+@media (max-width:520px){.bar{grid-template-columns:1fr}.wrap{gap:2.25rem}h1{font-size:1.6rem}}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:1rem}
+.tile{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:1rem;display:flex;flex-direction:column;gap:.25rem;min-width:0}
+.tile .k{font-size:.8rem;color:var(--ink2);letter-spacing:.04em}
+.tile .v{font-family:var(--serif);font-size:1.6rem;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.3}
+.tile .s{font-size:.8rem;color:var(--ink3)}
+tr.total td{font-weight:700;border-top:1.5px solid var(--ink);background:var(--verde-wash)}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header>
+  <span class="eyebrow">세무상담 자료 · 잠실5단지 조합원</span>
+  <h1>지금 팔고 자녀에게 증여할 때와 계속 보유할 때의 세금</h1>
+  <p class="meta">기준일 2026.10.12 · 2026년 현행 세율 기준 · 원 단위 계산, 표시는 만 원 단위</p>
+</header>
+
+<div class="tiles">
+  <div class="tile"><span class="k">① 매도 시 양도소득세</span><span class="v">1억 3,091만</span><span class="s">지방소득세 포함 · 1세대1주택 고가주택</span></div>
+  <div class="tile"><span class="k">② 세후 금액 전액 자녀 1명 증여</span><span class="v">12억 6,056만</span><span class="s">증여세 · 신고세액공제 3% 반영</span></div>
+  <div class="tile"><span class="k">③ 계속 보유 시 연간 세금</span><span class="v">약 943만</span><span class="s">재산세 + 종부세 · 고령자 공제 없을 때</span></div>
+</div>
+
+<section>
+  <h2>상담 전제</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>항목</th><th>내용</th></tr></thead>
+    <tbody>
+      <tr><td>양도 물건</td><td>잠실5단지 종전주택 (관리처분계획인가 전, 세법상 주택 상태에서 양도)</td></tr>
+      <tr><td>양도가액 / 취득가액</td><td>37억 / 10억</td></tr>
+      <tr><td>보유·거주기간</td><td>각 10년, 1세대1주택 비과세 요건 충족</td></tr>
+      <tr><td>필요경비</td><td>취득세·중개수수료 등은 반영하지 않음 (반영하면 세액이 줄어듦)</td></tr>
+      <tr><td>증여</td><td>성인 자녀, 최근 10년 내 같은 부모에게 받은 증여 없음, 현금 증여</td></tr>
+      <tr><td>보유세</td><td>공시가격 25.53억 가정(시세 37억 × 69%) · 1세대1주택 단독명의</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>1. 양도소득세 (1세대1주택, 12억 초과분 과세)</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>단계</th><th>계산</th><th class="num">금액</th></tr></thead>
+    <tbody>
+      <tr><td>양도차익</td><td>37억 − 10억</td><td class="num">27억</td></tr>
+      <tr><td>12억 초과분 양도차익</td><td>27억 × (37억 − 12억) ÷ 37억 = 27억 × 67.57%</td><td class="num">18억 2,432만</td></tr>
+      <tr><td>장기보유특별공제 80%</td><td>보유 10년 40% + 거주 10년 40% (표2)</td><td class="num">−14억 5,946만</td></tr>
+      <tr><td>양도소득금액</td><td></td><td class="num">3억 6,486만</td></tr>
+      <tr><td>양도소득 기본공제</td><td>연 1회</td><td class="num">−250만</td></tr>
+      <tr><td>과세표준</td><td></td><td class="num">3억 6,236만</td></tr>
+      <tr><td>산출세액</td><td>3억 6,236만 × 40% − 2,594만 (3억 초과 ~ 5억 구간)</td><td class="num">1억 1,901만</td></tr>
+      <tr><td>지방소득세</td><td>산출세액의 10%</td><td class="num">1,190만</td></tr>
+      <tr class="total"><td>양도세 합계</td><td></td><td class="num">1억 3,091만</td></tr>
+      <tr><td>세후 수령액</td><td>37억 − 1억 3,091만</td><td class="num">35억 6,909만</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">실효세율은 양도차익 대비 약 4.8%입니다. 장특공 80%는 보유·거주 모두 10년 이상이어서 받는 최대치입니다.</p>
+
+  <div class="callout">
+    <b>매도 시점이 중요합니다.</b> 관리처분계획인가 전에 팔면 일반 주택 양도라 양도차익 전체에 장특공 80%가 적용됩니다. 인가 후에는 조합원입주권 양도가 되어, 장특공은 인가 전 차익(종전자산 평가액 39억 6,468만 기준)에만 적용되고 인가 후 프리미엄에는 적용되지 않습니다. 또 잠실5단지는 투기과열지구라 조합설립인가(2013.12.19) 후 매수자는 원칙적으로 조합원 지위를 받지 못합니다. 다만 <b>1세대1주택자가 10년 보유·5년 거주한 주택</b>을 팔면 예외라서, 이 고객의 매수자는 조합원 지위를 승계할 수 있습니다(도시정비법 §39②, 시행령 §37). 계약 전에 조합에서 승계 가능 여부를 확인하는 게 좋습니다.
+  </div>
+</section>
+
+<section>
+  <h2>2. 세후 금액을 자녀에게 증여할 때의 증여세</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>단계</th><th>계산</th><th class="num">금액</th></tr></thead>
+    <tbody>
+      <tr><td>증여재산가액</td><td>양도대금 37억 − 양도세 1억 3,091만</td><td class="num">35억 6,909만</td></tr>
+      <tr><td>증여재산공제</td><td>성인 자녀 (10년 합산 5천만)</td><td class="num">−5,000만</td></tr>
+      <tr><td>과세표준</td><td></td><td class="num">35억 1,909만</td></tr>
+      <tr><td>산출세액</td><td>35억 1,909만 × 50% − 4억 6,000만 (30억 초과 구간)</td><td class="num">12억 9,955만</td></tr>
+      <tr><td>신고세액공제</td><td>기한 내 신고 시 3%</td><td class="num">−3,899만</td></tr>
+      <tr class="total"><td>증여세 납부액</td><td></td><td class="num">12억 6,056만</td></tr>
+      <tr><td>자녀 실수령액</td><td>35억 6,909만 − 12억 6,056만</td><td class="num">23억 853만</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">증여세는 증여일이 속한 달의 말일부터 3개월 안에 신고·납부합니다. 납부세액이 2천만 원을 넘으면 연부연납(최장 5년)을 신청할 수 있습니다. 부모가 증여세를 대신 내주면 그 금액도 다시 증여로 봅니다.</p>
+
+  <h3>나눠서 증여할 때 비교</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>방법</th><th class="num">증여세 합계</th><th class="num">자녀 측 실수령 합계</th><th>비고</th></tr></thead>
+    <tbody>
+      <tr><td>자녀 1명에게 전액</td><td class="num bad">12억 6,056만</td><td class="num">23억 853만</td><td>최고세율 50% 구간</td></tr>
+      <tr><td>자녀 1명, 혼인·출산 공제 1억 추가</td><td class="num">12억 1,206만</td><td class="num">23억 5,703만</td><td>혼인신고 전후 2년 이내 또는 출산 후 2년 이내</td></tr>
+      <tr><td>자녀 2명에게 반씩</td><td class="num good">10억 3,561만</td><td class="num">25억 3,349만</td><td>1인당 과표 17억 3,455만, 40% 구간</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">증여세는 받는 사람별로 계산하므로 받는 사람을 늘리면 누진세율 구간이 내려갑니다. 손자녀에게 바로 주면 세대생략 할증 30%(20억 넘으면 40%)가 붙습니다. 증여 후 10년 안에 부모가 사망하면 이 금액이 상속재산에 합산됩니다.</p>
+</section>
+
+<section>
+  <h2>3. 계속 보유할 때 1년 세금 (종전주택 상태)</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>세목</th><th>계산</th><th class="num">금액</th></tr></thead>
+    <tbody>
+      <tr><td>재산세</td><td>과표 11억 4,885만 (공시가 × 45%) × 0.4% − 63만</td><td class="num">397만</td></tr>
+      <tr><td>도시지역분</td><td>과표 × 0.14%</td><td class="num">161만</td></tr>
+      <tr><td>지방교육세</td><td>재산세 × 20%</td><td class="num">79만</td></tr>
+      <tr><td><b>재산세 소계</b></td><td></td><td class="num"><b>637만</b></td></tr>
+      <tr><td>종합부동산세</td><td>(25.53억 − 12억) × 60% = 과표 8억 1,180만 → 1.0% − 240만 = 572만, 재산세 중복분 146만 차감, 장기보유 40% 공제</td><td class="num">255만</td></tr>
+      <tr><td>농어촌특별세</td><td>종부세 × 20%</td><td class="num">51만</td></tr>
+      <tr class="total"><td>연간 합계</td><td></td><td class="num">약 943만</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>고객 나이에 따른 연간 합계 (종부세 고령자 공제)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>나이</th><th class="num">종부세 세액공제</th><th class="num">연간 세금 합계</th></tr></thead>
+    <tbody>
+      <tr><td>60세 미만</td><td class="num">장기 40%</td><td class="num">약 943만</td></tr>
+      <tr><td>60~64세</td><td class="num">장기 40% + 고령 20% = 60%</td><td class="num">약 841만</td></tr>
+      <tr><td>65~69세</td><td class="num">40% + 30% = 70%</td><td class="num">약 790만</td></tr>
+      <tr><td>70세 이상</td><td class="num">40% + 40% = 80% (한도)</td><td class="num">약 739만</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">공시가격은 가정치이니 부동산공시가격알리미의 실제 2026년 공시가격으로 바꿔 계산해야 합니다. 재산세 세부담상한(직전 연도의 130%)이 적용되면 실제 고지액은 더 낮을 수 있습니다. 철거(2028.3~2029.8 예정) 후에는 주택이 아니라 토지로 과세되고, 2035년 입주 후에는 신축 공시가격 기준으로 크게 오릅니다. 앞의 84㎡ 1채 사례 기준으로는 연 1,200만 원대입니다. 세금은 아니지만 지역가입자라면 건강보험료(재산 점수)도 보유비용입니다.</p>
+</section>
+
+<section>
+  <h2>4. 상담 정리</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>선택</th><th class="num">세금</th><th>남는 것</th></tr></thead>
+    <tbody>
+      <tr><td>지금 매도 후 자녀 1명에게 현금 증여</td><td class="num">양도세 1.31억 + 증여세 12.61억 = 13.91억</td><td>자녀 현금 23.09억</td></tr>
+      <tr><td>지금 매도 후 자녀 2명에게 나눠 증여</td><td class="num">1.31억 + 10.36억 = 11.67억</td><td>자녀 현금 합계 25.33억</td></tr>
+      <tr><td>계속 보유</td><td class="num">연 740만~943만 (철거 전까지)</td><td>신축 입주권과 이후 시세 상승분 유지, 2035년 입주</td></tr>
+    </tbody>
+  </table></div>
+
+  <ul class="check">
+    <li><span><b>증여세가 양도세보다 10배쯤 큽니다.</b> 1세대1주택 비과세와 장특공 80%로 양도세는 낮지만, 현금 35.7억을 한 번에 주면 절반 가까이 증여세로 나갑니다.</span></li>
+    <li><span><b>받는 사람을 나누거나 기간을 나누면 줄어듭니다.</b> 자녀 2명이면 약 2.3억이 줄고, 자녀 배우자·손자녀(할증 주의)까지 나누거나 10년 단위로 나눠 주는 방법도 비교할 수 있습니다.</span></li>
+    <li><span><b>매도 시점은 관리처분인가 전이 유리합니다.</b> 인가 후에 팔면 인가 후 프리미엄에 장특공이 없어집니다. 매수자의 조합원 지위 승계 예외(10년 보유·5년 거주)도 함께 확인합니다.</span></li>
+    <li><span><b>분양신청 마감 2026.10.31 전에 결정해야 합니다.</b> 팔 계획이어도 분양신청을 하지 않으면 현금청산 대상이 되므로, 분양신청은 해 두고 매도를 진행하는 게 일반적입니다. 이 부분은 조합에 확인이 필요합니다.</span></li>
+    <li><span><b>주택 자체를 증여하는 방법도 비교할 수 있습니다.</b> 주택이나 입주권을 증여하면 감정평가액·시가로 과세되고, 자녀가 취득세(조정지역 3억 이상 12%)를 냅니다. 원하면 따로 계산해 드릴 수 있습니다.</span></li>
+  </ul>
+</section>
+
+<footer>
+  <p>이 자료는 상담 설명용 계산이며, 실제 세액은 필요경비, 정확한 보유·거주기간, 공시가격, 증여 이력에 따라 달라집니다. 신고 전에 현행 법령을 다시 확인해야 합니다.</p>
+  <p>근거: 소득세법 §89·§95·§104, 같은 법 시행령 §159의4·§160 / 상속세 및 증여세법 §26·§53·§53의2·§57·§69·§71 / 지방세법 §111·§112·§151 / 종합부동산세법 §8·§9 / 도시정비법 §39.</p>
+</footer>
+
+</div>
+</body>
+</html>
