@@ -37,6 +37,7 @@ claude.ai 대화에서 진행하던 작업을 Claude Code로 이어서 한다.
 | `dart_cache/` | 원문 zip 캐시 (`{rcept_no}.zip`). 약 37,700개. **지우지 말 것** |
 | `audit_hours_rank.csv` | 최종 순위 (전체 파싱 후 생성) |
 | `parse_failed.csv` | 파싱 실패 건 |
+| `parse_progress.jsonl` | 파싱 이어받기 기록. 멈춘 뒤 같은 명령으로 재실행하면 남은 건만 처리. 파싱 로직을 고치면 `--fresh` |
 | `contacts_cache.csv` | 기업개황 API 캐시 |
 
 ## 파이프라인 (감사인 교체 제안 캠페인)

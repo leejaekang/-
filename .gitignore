@@ -5,6 +5,7 @@ filings_hist/
 contacts_cache.csv
 audit_hours_rank.csv
 parse_failed.csv
+parse_progress.jsonl
 mailing_list.xlsx
 signals_*.csv
 signals_top*.xlsx
