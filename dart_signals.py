@@ -349,11 +349,20 @@ def load_base(cfg, filings, input_path=None):
     if input_path:
         src = Path(input_path)
     else:
-        src = next((p for p in (BASE / "mailing_list.xlsx", BASE / "audit_hours_rank.csv") if p.exists()), None)
+        mail, rank = BASE / "mailing_list.xlsx", BASE / "audit_hours_rank.csv"
+        src = rank if rank.exists() else None
+        # mailing_list.xlsx는 순위 파일보다 나중에 만들어진 경우에만 쓴다 (옛 결과 사용 방지)
+        if mail.exists() and (src is None or mail.stat().st_mtime >= rank.stat().st_mtime):
+            src = mail
+        elif mail.exists():
+            print("  ! mailing_list.xlsx가 audit_hours_rank.csv보다 오래됨 → 순위 파일 사용 "
+                  "(주소·대표자는 contacts_cache.csv에서. 필요하면 dart_contacts.py 다시 실행)")
     if src is None or not src.exists():
         sys.exit("[오류] mailing_list.xlsx / audit_hours_rank.csv 가 없습니다. 전체 파싱이 끝났는지 확인하세요.")
     df = read_table(src)
     print(f"[입력] {src.name}: {len(df):,}행, 수정 {time.strftime('%Y-%m-%d %H:%M', time.localtime(src.stat().st_mtime))}")
+    if src.name == "audit_hours_rank.csv" and len(df) < 3000:
+        print(f"  ! {len(df)}행뿐입니다. 500건 테스트 결과일 수 있습니다 (전체 파싱이면 수만 행).")
 
     cols = {k: find_col(df, k, cfg) for k in COL_CANDIDATES}
     print("[컬럼 인식] " + ", ".join(f"{k}={v}" for k, v in cols.items() if v))
