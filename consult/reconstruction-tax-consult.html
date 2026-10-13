@@ -82,6 +82,25 @@ ol.plain{margin:0;padding-left:1.3rem;display:flex;flex-direction:column;gap:.45
 .grid2 h3{margin:0}
 footer{font-size:.8rem;color:var(--ink3);border-top:1px solid var(--rule);padding-top:1rem;display:flex;flex-direction:column;gap:.4rem}
 @media (max-width:520px){.bar{grid-template-columns:1fr}.wrap{gap:2.25rem}h1{font-size:1.6rem}}
+.askform td.ans{width:42%;height:2.6rem}
+.askform td.no{width:2.2rem;text-align:center;color:var(--ink3);font-variant-numeric:tabular-nums}
+.keep{break-inside:avoid;page-break-inside:avoid}
+@media print{
+  :root{--ink:#1F2326;--ink2:#4A5057;--ink3:#6B7178;--verde:#4E8C5A;--verde-deep:#35633F;--verde-wash:#EAF1EA;--paper:#FFFFFF;--card:#FFFFFF;--rule:#BFC5BC;--rule-soft:#DDE1DA;--ochre:#8A6818;--ochre-wash:#F7F1E2;--brick:#9E3B36;--brick-wash:#F8EAE8;color-scheme:light}
+  body{font-size:10.5pt;line-height:1.55;background:#fff}
+  .wrap{max-width:none;padding-block:0;gap:1.4rem}
+  section{gap:.7rem}
+  h2{break-after:avoid;page-break-after:avoid}
+  h3{break-after:avoid;page-break-after:avoid}
+  .tbl{overflow:visible}
+  table{min-width:0;font-size:9pt}
+  th,td{padding:.35rem .5rem}
+  .timeline svg{min-width:0}
+  .callout,.summary,.bars,.grid2,.grid2>div,.tbl,tr,.keep,ul.check li{break-inside:avoid;page-break-inside:avoid}
+  #ask{break-before:page;page-break-before:always}
+  .askform td.ans{height:3.3rem}
+  @page{size:A4;margin:14mm 12mm}
+}
 </style>
 </head>
 <body>
@@ -89,41 +108,41 @@ footer{font-size:.8rem;color:var(--ink3);border-top:1px solid var(--rule);paddin
 <div class="wrap">
 
 <header>
-  <span class="eyebrow">세무상담 준비자료 · 재건축 원조합원</span>
+  <span class="eyebrow">세무상담 준비자료 · 잠실5단지 재건축 원조합원</span>
   <h1>관리처분인가 이후 장기보유특별공제, 그리고 1채 vs 1+1 분양 비교</h1>
-  <p class="meta">3장에 잠실5단지 조합원 분양신청 안내서(2026.9) 수치로 다시 계산한 예시를 넣었습니다.</p>
-  <p class="meta">기준일 2026.10.12 · 소득세법·종합부동산세법·지방세법·도시정비법 현행 규정 기준 · 사례 수치는 설명용 가정</p>
+  <p class="meta">금액은 잠실5단지 조합원 분양신청 안내서(2026.9) 34평형 평균값 기준입니다. 고객 정보는 취득가액 10억, 2016.10 취득, 보유·거주 10년, 1세대1주택으로 가정했습니다.</p>
+  <p class="meta">기준일 2026.10.13 · 소득세법·종합부동산세법·지방세법·도시정비법 현행 규정 기준</p>
 </header>
 
-<div class="summary">
+<div class="summary keep">
   <div>
     <span class="q">Q1. 관리처분인가 이후에도 장기보유특별공제가 유지되나요?</span>
-    <p class="a">원조합원이면 유지됩니다. 신축 완공 후 팔면 양도차익 대부분(기존건물분)은 종전주택 취득일부터 보유기간을 셉니다. 추가분담금에 해당하는 부분(청산금납부분)만 관리처분인가일부터 셉니다. 다만 준공 전에 입주권 상태로 팔면 인가 후 프리미엄에는 공제가 없습니다.</p>
+    <p class="a">원조합원이면 유지됩니다. 신축을 받아 팔면 양도차익 대부분(기존건물분)은 종전주택 취득일부터 보유기간을 셉니다. 분담금에 해당하는 부분(청산금납부분)만 관리처분인가일부터 셉니다. 다만 인가 후 준공 전에 입주권 상태로 팔면 인가 후 상승분에는 공제가 없어, 같은 45억에 팔아도 세금이 1.5억가량 늘어납니다.</p>
   </div>
   <div>
     <span class="q">Q2. 작은 집 2채(1+1)와 큰 집 1채, 나중에 어느 쪽이 세금이 적나요?</span>
-    <p class="a">같은 총자산이라면 세금만 놓고 보면 1채가 유리합니다. 아래 사례에서 양도세는 1채 약 1.1억, 1+1은 약 2.7억~5.8억이고, 보유세도 1+1이 연 220만 원가량 더 나옵니다. 1+1은 임대수익, 자녀 이전, 소형 시세 강세처럼 세금 외 이점이 클 때 선택할 만합니다.</p>
+    <p class="a">세금만 보면 1채가 유리합니다. 34평형 기준으로 84㎡ 1채의 양도세는 약 2.2억, 59㎡+39㎡는 약 6.7억~13.1억입니다. 보유세도 1+1이 매년 약 1,750만 원 더 나옵니다. 1+1은 임대수익, 자녀 이전처럼 세금 외 목적이 분명할 때 고를 만합니다.</p>
   </div>
 </div>
 
-<!-- ───────────── Q1 ───────────── -->
+<!-- ───────────── 1. 장특공 ───────────── -->
 <section id="q1">
   <h2>1. 관리처분인가 이후 장기보유특별공제</h2>
 
   <p>관리처분계획인가일부터 종전주택은 세법상 <b>조합원입주권</b>(부동산을 취득할 수 있는 권리)으로 바뀝니다. 그래서 공제가 어떻게 적용되는지는 <b>언제, 어떤 상태로 파느냐</b>에 따라 달라집니다.</p>
 
-  <div class="timeline" role="img" aria-label="종전주택 취득부터 신축 양도까지 장기보유특별공제 보유기간 구간">
+  <div class="timeline keep" role="img" aria-label="종전주택 취득부터 신축 양도까지 장기보유특별공제 보유기간 구간">
     <svg viewBox="0 0 720 190" xmlns="http://www.w3.org/2000/svg">
       <line x1="30" y1="70" x2="690" y2="70" stroke="var(--ink2)" stroke-width="2"/>
       <g fill="var(--ink)" font-size="12">
         <circle cx="40" cy="70" r="6" fill="var(--verde-deep)"/>
-        <text x="40" y="50" text-anchor="middle" font-weight="700">종전주택 취득</text>
+        <text x="40" y="50" text-anchor="middle" font-weight="700">취득 2016.10</text>
         <circle cx="300" cy="70" r="6" fill="var(--ochre)"/>
-        <text x="300" y="50" text-anchor="middle" font-weight="700">관리처분인가</text>
+        <text x="300" y="50" text-anchor="middle" font-weight="700">관리처분인가 2027 예상</text>
         <circle cx="440" cy="70" r="5" fill="var(--ink3)"/>
-        <text x="440" y="50" text-anchor="middle">멸실·착공</text>
+        <text x="440" y="50" text-anchor="middle">철거 2028.3~</text>
         <circle cx="560" cy="70" r="5" fill="var(--ink3)"/>
-        <text x="560" y="50" text-anchor="middle">준공·입주</text>
+        <text x="560" y="50" text-anchor="middle">준공 2035.5</text>
         <circle cx="680" cy="70" r="6" fill="var(--brick)"/>
         <text x="680" y="50" text-anchor="middle" font-weight="700">양도</text>
       </g>
@@ -142,152 +161,83 @@ footer{font-size:.8rem;color:var(--ink3);border-top:1px solid var(--rule);paddin
     <thead><tr><th>파는 시점 / 상태</th><th>장특공 적용 대상</th><th>보유기간 계산</th></tr></thead>
     <tbody>
       <tr><td>관리처분인가 전 (주택)</td><td>양도차익 전체</td><td>취득일 ~ 양도일</td></tr>
-      <tr><td>인가 후 ~ 준공 전<br>(조합원입주권 양도)</td><td><b>인가 전 양도차익만</b><br><span class="bad">인가 후 프리미엄은 공제 없음</span></td><td>종전주택 취득일 ~ 관리처분인가일</td></tr>
-      <tr><td>준공 후 신축주택 양도<br>(원조합원, 분담금 납부)</td><td><b>기존건물분</b> = 인가 전 차익 + 인가 후 차익 × 평가액 ÷ (평가액 + 분담금)<br><b>청산금납부분</b> = 인가 후 차익 × 분담금 ÷ (평가액 + 분담금)</td><td>기존건물분: 종전 취득일 ~ 양도일<br>청산금납부분: 인가일 ~ 양도일</td></tr>
-      <tr><td>준공 후 신축주택 양도<br>(원조합원, 환급금 수령)</td><td>인가 후 차익 + 인가 전 차익 × (평가액 − 환급금) ÷ 평가액</td><td>인가 전·후 차익 전체에 종전 취득일 ~ 신축 양도일의 단일 기간 적용 (재산-736, 2009.11.16)</td></tr>
-      <tr><td>승계조합원<br>(인가 후 입주권 매수)</td><td>신축주택 기준</td><td>신축 취득일(사용승인일 등) ~ 양도일</td></tr>
+      <tr><td>인가 후 ~ 준공 전<br>(조합원입주권 양도)</td><td><b>인가 전 양도차익만</b><br><span class="bad">인가 후 상승분은 공제 없음</span></td><td>종전주택 취득일 ~ 관리처분인가일</td></tr>
+      <tr><td>준공 후 신축주택 양도<br>(분담금 납부)</td><td><b>기존건물분</b> = 인가 전 차익 + 인가 후 차익 × 평가액 ÷ (평가액 + 분담금)<br><b>청산금납부분</b> = 인가 후 차익 × 분담금 ÷ (평가액 + 분담금)</td><td>기존건물분: 종전 취득일 ~ 양도일<br>청산금납부분: 인가일 ~ 양도일</td></tr>
+      <tr><td>준공 후 신축주택 양도<br>(환급금 수령)</td><td>인가 후 차익 + 인가 전 차익 × (평가액 − 환급금) ÷ 평가액</td><td>전체에 종전 취득일 ~ 신축 양도일 (재산-736)</td></tr>
+      <tr><td>승계조합원<br>(인가 후 입주권 매수)</td><td>신축주택 기준</td><td>신축 취득일 ~ 양도일</td></tr>
     </tbody>
   </table></div>
-  <p class="note">근거: 소득세법 §95②(입주권 양도 시 인가 전 차익 한정), 소득세법 시행령 §166①(입주권 양도차익), §166②(신축주택 양도차익), §166⑤(장특공 보유기간). 입주권을 팔 때 인가 전 차익의 보유기간은 종전 취득일부터 관리처분인가일까지입니다(§166⑤1호). 입주권도 관리처분인가일 기준 1세대1주택이고 인가일까지 2년 이상 거주했다면 표2(최대 80%)가 적용됩니다. 다만 보유·거주기간은 취득일부터 인가일까지만 세고, 인가 후 철거 전에 산 기간은 빠집니다(사전-2015-법령해석재산-0012). 인가 후 철거 전에 주택 상태로 팔아도 입주권 양도로 봅니다(조심2023서111). 신축을 팔 때 청산금납부분에 표2를 받으려면 신축에서 따로 2년 이상 살아야 하고, 종전주택 거주기간과 합산하지 않습니다(서면-2021-부동산-1042, 조심2024서0090). 기존건물분은 신축에 살지 않아도 표2가 적용됩니다.</p>
 
   <div class="callout">
-    <b>인가 전·후를 나누는 기준 가격은 &lsquo;종전자산 평가액&rsquo;입니다.</b> 관리처분계획에 정해진 기존 건물과 부수토지의 평가액(소득세법 시행령 §166④)이고, 관리처분계획이 변경되면 변경된 가격을 씁니다. 이 평가액은 사업시행계획인가 고시일을 기준으로 한 감정평가액(도시정비법 §74①)입니다. 인가일의 시세나 실거래가가 아니고, 비례율을 곱한 권리가액도 아닙니다.
+    <b>인가 전·후를 나누는 기준은 &lsquo;종전자산 평가액&rsquo;입니다.</b> 관리처분계획에 정해진 평가액(소득세법 시행령 §166④)으로, 사업시행계획인가 고시일(2026.07.09) 기준 감정평가액입니다. 시세도, 비례율을 곱한 권리가액도 아닙니다. 안내서 34평형 평균으로는 <b>평가액 39억 6,468만</b>이고, 권리가액은 35억 3,808만(× 비례율 89.24%)입니다.
     <br><br>
-    인가 전 양도차익 = 종전자산 평가액 &minus; 종전주택 취득가액(필요경비 포함)<br>
-    인가 후 양도차익 = 양도가액 &minus; (종전자산 평가액 + 납부한 청산금) &minus; 그 밖의 필요경비
-    <br><br>
-    감정평가액은 보통 시세보다 낮게 나옵니다. 입주권 상태로 팔면 공제를 받는 인가 전 차익이 그만큼 작아집니다. 신축을 팔 때는 인가 후 차익도 평가액 비율만큼은 종전 취득일부터 기간을 세므로 영향이 작습니다. 비례율이 100%를 넘어 권리가액이 평가액보다 높아도, 그 차이는 인가 후 차익에 들어갑니다. 청산금을 돌려받은 경우에는 인가 전 차익 가운데 환급금 비율만큼을 그때 양도한 것으로 보아 따로 계산합니다.
+    인가 전 양도차익 = 39억 6,468만 − 취득가액 10억 = <b>29억 6,468만</b><br>
+    인가 후 양도차익 = 양도가액 − (39억 6,468만 + 납부한 분담금) − 그 밖의 필요경비
   </div>
+
+  <h3>34평형 계산 예시 ① 같은 45억에 팔아도 시점에 따라 달라지는 세금</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>구분</th><th class="num">양도차익</th><th class="num">장특공 대상 / 공제액</th><th class="num">양도세 (지방세 포함)</th></tr></thead>
+    <tbody>
+      <tr><td>관리처분인가 전에 주택으로 양도</td><td class="num">35억</td><td class="num">과세분 25.67억 전체 / 20.53억 (80%)</td><td class="num good">약 1억 9,647만</td></tr>
+      <tr><td>인가 후 입주권으로 양도</td><td class="num">인가 전 29.65억<br>인가 후 5.35억</td><td class="num">인가 전 과세분 21.74억만 / 17.39억 (80%)<br><span class="bad">인가 후 3.93억은 공제 없음</span></td><td class="num bad">약 3억 4,156만</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">취득 2016.10, 취득가액 10억, 1세대1주택, 인가일까지 보유·거주 10년 이상(80%) 가정. 12억 초과분만 과세(× 73.3%). 입주권의 보유·거주기간은 인가일까지만 셉니다(시행령 §166⑤1호, 사전-2015-법령해석재산-0012). 인가 후에는 철거 전이라도 입주권 양도로 봅니다(조심2023서111).</p>
+
+  <h3>34평형 계산 예시 ② 신축을 받아 2038.10에 팔 때 차익이 나뉘는 방식</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>받는 주택</th><th class="num">종전 취득가·평가액 배분</th><th class="num">분담금(−환급)</th><th class="num">종전 취득일부터 세는 차익</th><th class="num">인가일부터 세는 차익</th></tr></thead>
+    <tbody>
+      <tr><td>84㎡ 1채 (시세 45.46억 가정)</td><td class="num">10억 / 39.65억</td><td class="num">−5.07억</td><td class="num">36.74억 전체</td><td class="num">없음</td></tr>
+      <tr><td>1+1 중 59㎡ (시세 35.25억 가정)</td><td class="num">6.09억 / 24.14억</td><td class="num">+1.96억</td><td class="num">26.52억</td><td class="num">0.69억</td></tr>
+      <tr><td>1+1 중 39㎡ (시세 22.64억 가정)</td><td class="num">3.91억 / 15.51억</td><td class="num">+1.26억</td><td class="num">17.03억</td><td class="num">0.44억</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">1+1은 종전 취득가액·평가액·분담금을 두 주택의 조합원 분양가 비율(60.9 : 39.1)로 나눴습니다. 분담금이 작아 인가일부터 세는 부분은 차익의 2~3%뿐이라, 신축을 받아 팔면 장특공 손해는 거의 없습니다. 청산금납부분에 표2를 받으려면 신축에서 2년 이상 살아야 하고 종전주택 거주기간과 합산하지 않습니다(서면-2021-부동산-1042, 조심2024서0090).</p>
 
   <h3>공제율을 바꾸는 변수</h3>
   <ul class="check">
-    <li><span><b>1세대1주택 여부 (양도일 기준).</b> 1주택이면 보유 연 4% + 거주 연 4%, 최대 80%(표2). 다주택이면 연 2%, 최대 30%(표1). 1+1을 받으면 신축 완공 후 2주택이 되어 먼저 파는 집은 표1이 적용됩니다.</span></li>
-    <li><span><b>거주기간.</b> 표2는 보유 3년·거주 2년 이상이 요건입니다. 공사기간은 보유기간에는 들어가지만 거주기간에는 들어가지 않습니다. 기존건물분은 종전주택 거주기간(인가 후 철거 전 거주 포함, 사전-2024-법규재산-0713)과 신축 거주기간을 합산합니다. 청산금납부분은 신축 거주기간만 따로 봅니다.</span></li>
-    <li><span><b>입주권 상태로 파는지, 준공 후 파는지.</b> 준공 전에 팔면 인가 후 상승분 공제가 0이라 세 부담이 크게 다릅니다. 입주권 양도도 인가일 현재 비과세 요건을 갖췄고 다른 주택이 없으면 12억까지 비과세됩니다(소득세법 §89①4호).</span></li>
-    <li><span><b>청산금 납부·수령.</b> 분담금을 내면 인가 후 차익 중 분담금 비율만큼은 관리처분인가일부터 기간을 셉니다(청산금납부분). 청산금을 돌려받으면 그 부분은 종전주택 일부를 판 것으로 보아 수령 시점에 양도세 문제가 생깁니다(1주택이면 비과세 가능).</span></li>
-    <li><span><b>다주택 중과.</b> 조정대상지역 주택을 2주택 이상 상태에서 팔면 기본세율 +20%p(3주택 +30%p)이고 장특공은 아예 배제됩니다. 2025.10.15 대책으로 서울 전역이 조정대상지역이며, 중과 한시배제는 2026.5.9.로 종료됐습니다. <span class="bad">상담 직전 현행 시행령을 한 번 더 확인하세요.</span></span></li>
-    <li><span><b>입주권·분양권의 주택 수 포함.</b> 비과세·중과 판정 시 입주권은 주택 수에 들어갑니다(2021.1.1 이후 취득 분양권도 포함). 공사기간 중 다른 집을 사거나 팔 계획이 있으면 반드시 같이 검토해야 합니다.</span></li>
-    <li><span><b>사업기간 중 대체주택.</b> 사업시행인가일 이후 대체주택을 사서 1년 이상 거주하고, 준공 후 2년 내 신축에 입주하고 대체주택을 팔면 대체주택이 비과세됩니다(소득세법 시행령 §156의2⑤).</span></li>
-    <li><span><b>세법 개정 리스크.</b> 고가 1주택 장특공(특히 보유분) 축소 논의가 나올 수 있으므로, 양도 시점의 법이 적용된다는 점을 고객께 안내합니다.</span></li>
+    <li><span><b>1세대1주택 여부 (양도일 기준).</b> 1주택이면 보유 연 4% + 거주 연 4%, 최대 80%(표2). 다주택이면 연 2%, 최대 30%(표1). 1+1을 받으면 준공 후 2주택이라 먼저 파는 집은 표1입니다.</span></li>
+    <li><span><b>거주기간.</b> 표2는 보유 3년·거주 2년 이상이 요건입니다. 공사기간은 보유기간에는 들어가고 거주기간에는 빠집니다. 기존건물분은 종전주택 거주(인가 후 철거 전 거주 포함, 사전-2024-법규재산-0713)와 신축 거주를 합산합니다.</span></li>
+    <li><span><b>매도 시점.</b> 관리처분인가 전에 팔면 차익 전체에 공제, 인가 후 준공 전이면 인가 전 차익에만 공제됩니다. 입주권도 인가일 기준 요건을 갖춘 1주택자면 12억까지 비과세입니다(소득세법 §89①4호).</span></li>
+    <li><span><b>환급금.</b> 84㎡처럼 환급(5.07억)을 받으면 종전주택 일부를 판 것으로 보아 이전고시 다음 날 양도세가 생깁니다. 34평형 가정으로 약 700만 원입니다.</span></li>
+    <li><span><b>다주택 중과.</b> 서울 전역이 조정대상지역(2025.10.15 대책)이고 중과 한시배제는 2026.5.9 종료됐습니다. 2주택 상태 양도는 +20%p, 장특공 배제입니다. <span class="bad">양도 직전 현행 법령 재확인</span></span></li>
+    <li><span><b>주택 수 계산.</b> 입주권과 2021년 이후 취득한 분양권은 주택 수에 들어갑니다. 공사기간 중 다른 집을 사면 반드시 함께 검토합니다. 대체주택 특례(시행령 §156의2⑤)도 이때 씁니다.</span></li>
   </ul>
 </section>
 
-<!-- ───────────── Q2 ───────────── -->
-<section id="q2">
-  <h2>2. 1채로 받을 때 vs 작은 집 2채(1+1)로 받을 때</h2>
-
-  <div class="callout">
-    <b>1+1 분양 요건 (도시정비법 §76①7호 라목).</b> 종전자산 가격 또는 종전 주거전용면적 범위에서 2주택을 받을 수 있고, 그중 1채는 <b>전용 60㎡ 이하</b>여야 합니다. 이 60㎡ 이하 주택은 <b>이전고시일 다음 날부터 3년간</b> 매매·증여 등 권리 변동이 금지됩니다(상속은 예외).
-  </div>
-
-  <h3>세법상 차이 한눈에</h3>
-  <div class="tbl"><table>
-    <thead><tr><th>항목</th><th>1채</th><th>1+1 (2채)</th></tr></thead>
-    <tbody>
-      <tr><td>준공 후 주택 수</td><td>1주택</td><td>2주택</td></tr>
-      <tr><td>먼저 파는 집 양도세</td><td>12억까지 비과세, 초과분 장특공 최대 80%</td><td class="bad">과세. 장특공 최대 30%, 조정지역 중과 시 공제 0 + 20%p</td></tr>
-      <tr><td>일시적 2주택 특례</td><td>해당 없음</td><td>두 채의 취득일이 같아 적용 불가</td></tr>
-      <tr><td>남은 1채 양도</td><td>—</td><td>1주택 비과세·표2 적용. 보유기간은 처음부터 이어짐(2022.5.10 이후 재기산 제도 폐지)</td></tr>
-      <tr><td>종합부동산세</td><td>공제 12억, 고령자·장기보유 세액공제 최대 80%</td><td>공제 9억, 세액공제 없음 (2주택은 일반세율)</td></tr>
-      <tr><td>재산세 공정시장가액비율</td><td>43~45% (1세대1주택)</td><td>60%</td></tr>
-      <tr><td>임대소득</td><td>—</td><td>소형 1채 월세는 과세(2주택자는 전세보증금 간주임대료 없음)</td></tr>
-    </tbody>
-  </table></div>
-
-  <h3>사례 가정</h3>
-  <div class="tbl"><table>
-    <thead><tr><th>구분</th><th>내용</th></tr></thead>
-    <tbody>
-      <tr><td>종전주택</td><td>2012.3 취득가 5억, 2012~2024 거주(12년), 서울(조정대상지역)</td></tr>
-      <tr><td>관리처분인가</td><td>2024.6, 종전자산 평가액 12억(비례율 100% 가정, 권리가액도 12억) → 인가 전 양도차익 7억</td></tr>
-      <tr><td>준공·입주</td><td>2028.6 입주 후 계속 거주, 2033.6 양도</td></tr>
-      <tr><td>A. 1채</td><td>분양가 15억(분담금 3억) → 양도가 30억</td></tr>
-      <tr><td>B. 1+1</td><td>84㎡ 분양가 9억(평가액 배분 7.2억 + 분담 1.8억) → 양도가 18억, 거주<br>59㎡ 분양가 6억(평가액 배분 4.8억 + 분담 1.2억) → 양도가 12억</td></tr>
-    </tbody>
-  </table></div>
-  <p class="note">두 안의 총 분양가(15억)와 총 시세(30억)를 같게 두어 세금 차이만 보이게 했습니다. 기타 필요경비·취득세는 무시했고, 종전주택 원가·평가액은 분양가 비율(60:40)로 나눴습니다.</p>
-
-  <h3>양도소득세 비교 (지방소득세 포함)</h3>
-  <div class="bars" aria-label="시나리오별 양도세 합계 막대">
-    <div class="bar"><div class="lab">A. 1채 (1세대1주택)<small>과세차익 13.2억 · 장특공 10.13억</small></div><div class="track"><div class="fill" style="width:13%"></div><span>1억 553만</span></div></div>
-    <div class="bar"><div class="lab">B. 59㎡ 먼저 → 84㎡<small>일반세율 (중과 미적용 시)</small></div><div class="track"><div class="fill o" style="width:33%"></div><span>2억 7,203만</span></div></div>
-    <div class="bar"><div class="lab">B. 84㎡ 먼저 → 59㎡<small>일반세율 (중과 미적용 시)</small></div><div class="track"><div class="fill o" style="width:48%"></div><span>3억 9,618만</span></div></div>
-    <div class="bar"><div class="lab">B. 59㎡ 먼저 → 84㎡<small>59㎡에 조정지역 2주택 중과</small></div><div class="track"><div class="fill r" style="width:70%"></div><span>5억 8,040만</span></div></div>
-  </div>
-
-  <div class="tbl"><table>
-    <thead><tr><th>시나리오</th><th class="num">양도차익</th><th class="num">과세 차익</th><th class="num">장특공</th><th class="num">세액 합계</th></tr></thead>
-    <tbody>
-      <tr><td>A. 30억 1채 (1주택, 기존건물분 80% / 청산금분 56%)</td><td class="num">22.0억</td><td class="num">13.2억</td><td class="num">10.13억</td><td class="num good">1억 553만</td></tr>
-      <tr><td>B-1단계. 59㎡ 12억 (2주택, 30% / 18%)</td><td class="num">8.8억</td><td class="num">8.8억</td><td class="num">2.50억</td><td class="num">2억 5,056만</td></tr>
-      <tr><td>　〃 중과 시 (공제 0, +20%p)</td><td class="num">8.8억</td><td class="num">8.8억</td><td class="num">0</td><td class="num bad">5억 5,892만</td></tr>
-      <tr><td>B-2단계. 84㎡ 18억 (1주택, 80% / 56%)</td><td class="num">13.2억</td><td class="num">4.4억</td><td class="num">3.38억</td><td class="num">2,148만</td></tr>
-      <tr><td>B'. 84㎡ 먼저 (2주택) → 59㎡ 12억 비과세</td><td class="num">13.2억</td><td class="num">13.2억</td><td class="num">3.74억</td><td class="num">3억 9,618만</td></tr>
-    </tbody>
-  </table></div>
-  <p class="note">장특공률: 기존건물분은 보유 21년·거주 17년, 청산금납부분은 보유 9년(2024.6~2033.6)·거주 5년으로 계산(시행령 §166⑤2호). 세율은 2026년 기본세율(6~45%), 기본공제 250만 원 반영.</p>
-
-  <div class="callout green">
-    <b>매도 순서가 중요합니다.</b> 1+1이면 <b>양도차익이 작은 집을 먼저</b> 팔고 큰 집을 1주택 상태로 남기는 쪽이 유리합니다. 소형은 이전고시 후 3년이 지나야 팔거나 증여할 수 있으니, 그 시점이 중과 여부와 맞물리는지 같이 봐야 합니다.
-  </div>
-
-  <h3>보유세 비교 (준공 이듬해, 연간)</h3>
-  <div class="tbl"><table>
-    <thead><tr><th>구분</th><th class="num">공시가격</th><th class="num">재산세 계</th><th class="num">종부세 + 농특세</th><th class="num">연간 합계</th></tr></thead>
-    <tbody>
-      <tr><td>A. 1채 (장기보유 50%)</td><td class="num">17.25억</td><td class="num">406만</td><td class="num">62만</td><td class="num good">약 468만</td></tr>
-      <tr><td>A. 1채 (장기 50% + 고령 30%)</td><td class="num">17.25억</td><td class="num">406만</td><td class="num">25만</td><td class="num good">약 431만</td></tr>
-      <tr><td>B. 1+1 단독명의 2주택</td><td class="num">10.35억 + 6.9억</td><td class="num">490만</td><td class="num">202만</td><td class="num bad">약 692만</td></tr>
-    </tbody>
-  </table></div>
-  <p class="note">시세 A 25억, B 15억 + 10억, 공시가 현실화율 69% 가정. 재산세 계는 도시지역분·지방교육세 포함. 종부세는 공정시장가액비율 60%, 재산세 중복분은 근사 차감, 세부담상한(재산세 105~130%, 종부세 150%)은 반영하지 않았습니다. 재건축 신축의 종부세 장기보유 공제는 멸실된 종전주택 취득일부터 기산합니다. 공사기간 중에는 주택이 아니라 토지로 재산세가 나옵니다.</p>
-
-  <p>보유세 차이는 <b>연 220만 원 안팎</b>, 10년이면 2천만 원 수준입니다. 양도세 차이(1.6억 이상)에 비하면 작고, 소형 1채 월세 수입으로 상쇄될 수 있습니다.</p>
-
-  <h3>1+1을 고려할 만한 경우</h3>
-  <div class="grid2">
-    <div><h3>임대 현금흐름</h3><p>은퇴 후 소형 1채 월세로 생활비를 마련하려는 경우. 월세 소득세와 건강보험료(지역가입자) 증가도 함께 계산합니다.</p></div>
-    <div><h3>자녀 이전</h3><p>3년 전매제한이 끝난 뒤 소형을 자녀에게 증여하거나 상속 재산을 나누기 쉽습니다. 증여 시 증여세·취득세(조정지역 3억 이상 12%)를 따로 봐야 합니다.</p></div>
-    <div><h3>소형 시세 강세</h3><p>소형 평형의 평당가가 높게 형성되는 단지라면 총자산 증가가 세금 차이를 넘을 수 있습니다.</p></div>
-    <div><h3>1채 쪽이 나은 경우</h3><p>실거주 후 언젠가 한 번에 팔 계획, 고령자 공제를 받을 나이, 다른 주택 취득 가능성이 있는 경우에는 1채가 단순하고 세금도 적습니다.</p></div>
-  </div>
-</section>
-
-<!-- ───────────── 잠실5단지 실제 수치 ───────────── -->
+<!-- ───────────── 2. 안내서 수치 ───────────── -->
 <section id="jamsil">
-  <h2>3. 잠실5단지 분양신청 안내서 수치로 본 계산 예시</h2>
+  <h2>2. 잠실5단지 분양신청 안내서 핵심 수치</h2>
 
   <div class="callout red">
-    <b>분양신청 마감 2026.10.31(토).</b> 마감 후에는 신청 평형과 1+1 여부를 바꾸거나 철회할 수 없습니다(안내서 [4] 유의사항). 지금은 사업시행인가 이후, 관리처분인가 이전 단계라서 고객의 집은 아직 세법상 <b>주택</b>입니다. 관리처분인가가 나야 조합원입주권으로 바뀝니다.
+    <b>분양신청 마감 2026.10.31(토).</b> 마감 후에는 신청 평형과 1+1 여부를 바꾸거나 철회할 수 없습니다(안내서 [4]). 지금은 관리처분인가 전이라 고객의 집은 세법상 아직 <b>주택</b>입니다.
   </div>
 
-  <h3>사업 일정 (안내서 기재)</h3>
+  <h3>사업 일정</h3>
   <div class="tbl"><table>
     <thead><tr><th>단계</th><th>일자</th><th>세무상 의미</th></tr></thead>
     <tbody>
-      <tr><td>조합설립인가</td><td>2013.12.19</td><td>투기과열지구라 이후 조합원 지위 양도가 제한됨(도시정비법 §39②, 10년 보유·5년 거주 1주택자 등은 예외)</td></tr>
+      <tr><td>조합설립인가</td><td>2013.12.19</td><td>투기과열지구라 이후 매수자는 조합원 지위 승계 제한(도시정비법 §39②, 10년 보유·5년 거주 1주택자 등 예외)</td></tr>
       <tr><td>사업시행계획인가 고시</td><td>2026.07.09</td><td><b>종전자산 평가 기준일</b></td></tr>
       <tr><td>조합원 분양신청</td><td>2026.09.29 ~ 10.31</td><td>1채 / 1+1 선택 마감</td></tr>
-      <tr><td>관리처분계획인가</td><td>미정 (이주 전 예상)</td><td>주택이 입주권으로 바뀌는 날, 인가 후 차익 장특공 기산일</td></tr>
-      <tr><td>이주 / 철거</td><td>2027.8~2028.2 / 2028.3~2029.8</td><td>공사기간은 거주기간에 들어가지 않음</td></tr>
-      <tr><td>준공인가</td><td>2035.05.31 (예정)</td><td>재건축부담금 종료시점, 소형(60㎡ 이하) 전매제한은 이전고시 다음 날부터 3년</td></tr>
+      <tr><td>관리처분계획인가</td><td>미정 (이주 전 예상)</td><td>주택이 입주권으로 바뀌는 날, 청산금납부분 장특공 기산일</td></tr>
+      <tr><td>이주 / 철거</td><td>2027.8~2028.2 / 2028.3~2029.8</td><td>공사기간은 거주기간에서 빠짐</td></tr>
+      <tr><td>준공인가</td><td>2035.05.31 (예정)</td><td>소형(60㎡ 이하) 전매제한은 이전고시 다음 날부터 3년</td></tr>
     </tbody>
   </table></div>
 
   <h3>평형별 종전자산 평가액과 권리가액</h3>
   <div class="tbl"><table>
-    <thead><tr><th>종전 평형</th><th class="num">전용(㎡)</th><th class="num">종전자산 평균평가액</th><th class="num">+ 수영장·정구장 지분</th><th class="num">평가액 합계</th><th class="num">권리가액 (×89.24%)</th></tr></thead>
+    <thead><tr><th>종전 평형</th><th class="num">전용(㎡)</th><th class="num">평균평가액</th><th class="num">+ 수영장·정구장 지분</th><th class="num">평가액 합계</th><th class="num">권리가액 (×89.24%)</th></tr></thead>
     <tbody>
       <tr><td>34평형 (2,280세대)</td><td class="num">76.50</td><td class="num">39억 954만</td><td class="num">5,515만</td><td class="num good">39억 6,468만</td><td class="num">35억 3,808만</td></tr>
       <tr><td>35평형 (300세대)</td><td class="num">81.75</td><td class="num">40억 4,310만</td><td class="num">5,994만</td><td class="num good">41억 305만</td><td class="num">36억 6,156만</td></tr>
       <tr><td>36평형 (1,350세대)</td><td class="num">82.57</td><td class="num">43억 58만</td><td class="num">5,994만</td><td class="num good">43억 6,052만</td><td class="num">38억 9,133만</td></tr>
     </tbody>
   </table></div>
-  <p class="note">출처: 안내서 p.53 종전자산평가액, p.68 추정분담금. 평가액은 사업시행계획인가 고시일(2026.07.09) 기준 감정평가 2곳의 산술평균이며 평형별 평균입니다. 실제 금액은 조합원 개별 통지문에 나옵니다. 추정 비례율은 89.24%입니다(총수입 21조 3,940억 − 총사업비 6조 3,850억, ÷ 종전자산 총액 16조 8,174억).</p>
-
-  <div class="callout">
-    <b>34평형 예시: 세금 기준은 39억 6,468만, 분담금 기준은 35억 3,808만.</b> 비례율이 100%보다 낮아 권리가액이 평가액보다 약 4.27억 작습니다. 분담금과 환급금은 권리가액으로 계산하지만, 양도세의 인가 전·후 차익은 <b>평가액 39억 6,468만</b>으로 나눕니다. 취득가가 10억이면 인가 전 양도차익은 약 29.6억이고, 이 부분은 종전주택 취득일부터 장특공 기간을 셉니다.
-  </div>
+  <p class="note">출처: 안내서 p.53, p.68. 평가액은 감정평가 2곳 산술평균의 평형별 평균이며, 실제 금액은 조합원 개별 통지문에 나옵니다. 추정 비례율 89.24% = (총수입 21조 3,940억 − 총사업비 6조 3,850억) ÷ 종전자산 총액 16조 8,174억.</p>
 
   <h3>34평형 조합원의 신청 평형별 추정 분담금 (3종주거지역 평균가)</h3>
   <div class="tbl"><table>
@@ -303,16 +253,11 @@ footer{font-size:.8rem;color:var(--ink3);border-top:1px solid var(--rule);paddin
       <tr><td>126㎡</td><td class="num">47억 5,795만</td><td class="num">+12억 1,986만</td></tr>
     </tbody>
   </table></div>
-  <p class="note">안내서 p.68 기준 추정치로, 관리처분계획 수립 때와 동·호수 추첨 결과에 따라 달라집니다.</p>
-
-  <div class="callout red">
-    <b>환급금도 양도세 대상입니다.</b> 84㎡를 받아 약 5.07억을 환급받으면, 종전주택의 일부(5.07억 ÷ 39.65억)를 판 것으로 봅니다. 1세대1주택이라도 평가액이 12억을 넘으므로 12억 초과 비율만큼 과세됩니다. 아래 가정에서 이 부분 세액은 약 700만 원입니다. 39·45·59㎡처럼 환급이 큰 평형을 고르면 이 금액이 훨씬 커집니다.
-  </div>
+  <p class="note">안내서 p.68 추정치. 관리처분계획 수립과 동·호수 추첨 결과에 따라 달라집니다.</p>
 
   <h3>34평형의 1+1 가능 조합</h3>
-  <p>안내서 [3]에 따라 1+1은 <b>종전자산 평가액 범위(두 채 분양가 합계 ≤ 평가액)</b> 또는 <b>종전 주거전용면적 범위</b>에서 신청할 수 있습니다. 추가 1채는 39·45·59㎡ 중 하나입니다.</p>
   <div class="tbl"><table>
-    <thead><tr><th>조합</th><th class="num">분양가 합계</th><th>34평형(39억 6,468만) 기준</th><th class="num">분담금</th></tr></thead>
+    <thead><tr><th>조합</th><th class="num">분양가 합계</th><th>평가액 39억 6,468만 기준</th><th class="num">분담금</th></tr></thead>
     <tbody>
       <tr><td>59㎡ + 39㎡</td><td class="num">38억 5,957만</td><td class="good">가능 (여유 1.05억뿐)</td><td class="num">+3억 2,148만</td></tr>
       <tr><td>45㎡ + 39㎡</td><td class="num">32억 7,342만</td><td class="good">가능</td><td class="num">−2억 6,466만</td></tr>
@@ -320,37 +265,61 @@ footer{font-size:.8rem;color:var(--ink3);border-top:1px solid var(--rule);paddin
       <tr><td>84㎡ + 39㎡</td><td class="num">45억 4,042만</td><td class="bad">불가</td><td class="num">—</td></tr>
     </tbody>
   </table></div>
-  <p class="note">분양가는 주택형 평균가입니다. 동·호수 추첨 결과 실제 종후 가격 합계가 평가액을 넘으면 추가 1채는 배정되지 않습니다(안내서 [3] ※). 그래서 59+39는 층·향에 따라 탈락할 수 있습니다. 면적 기준은 안내서에 전유면적 104.04㎡(p.53)와 전용 76.50㎡(p.68)가 함께 표기되어 있으니 조합에 확인이 필요합니다.</p>
+  <p class="note">1+1은 두 채 분양가 합계가 평가액 이하이거나 종전 전용면적 범위여야 하고, 추가 1채는 39·45·59㎡ 중 하나입니다(안내서 [3], 도시정비법 §76①7호 라목). 동·호수 추첨 후 실제 가격 합계가 평가액을 넘으면 추가 1채는 배정되지 않아, 59+39는 층·향에 따라 탈락할 수 있습니다.</p>
+</section>
 
-  <h3>양도세 시뮬레이션: 84㎡ 1채 vs 59㎡+39㎡</h3>
+<!-- ───────────── 3. 1채 vs 1+1 ───────────── -->
+<section id="q2">
+  <h2>3. 84㎡ 1채 vs 59㎡ + 39㎡ (1+1)</h2>
+
+  <div class="callout">
+    <b>1+1 요건 (도시정비법 §76①7호 라목).</b> 그중 1채는 <b>전용 60㎡ 이하</b>이고, 이 주택은 <b>이전고시일 다음 날부터 3년간</b> 매매·증여 등 권리 변동이 금지됩니다(상속은 예외).
+  </div>
+
+  <h3>세법상 차이 한눈에</h3>
   <div class="tbl"><table>
-    <thead><tr><th>가정</th><th>내용</th></tr></thead>
+    <thead><tr><th>항목</th><th>84㎡ 1채</th><th>59㎡ + 39㎡</th></tr></thead>
     <tbody>
-      <tr><td>고객</td><td>34평형, 2010.6 취득가 10억, 1세대1주택, 2010.6~2027.8 거주</td></tr>
-      <tr><td>일정</td><td>관리처분인가 2027.6, 입주 2035.6, 이전고시 2035.9 (모두 가정), 양도 2038.10 (소형 전매제한 3년 경과 후)</td></tr>
-      <tr><td>신축 시세</td><td>조합원 분양가 × 1.5 → 84㎡ 45.46억, 59㎡ 35.25억, 39㎡ 22.64억</td></tr>
-      <tr><td>장특공률</td><td>59+39: 1주택이면 기존건물분 80%, 청산금납부분 52%(보유 11년 40% + 거주 3년 12%) / 2주택이면 기존건물분 30%, 청산금납부분 22%<br>84㎡(환급): 전체 차익 80% (재산-736: 종전 취득일 ~ 양도일 단일 기간)</td></tr>
-      <tr><td>1+1 안분</td><td>평가액·취득가·분담금을 두 채 분양가 비율(60.9 : 39.1)로 배분</td></tr>
+      <tr><td>준공 후 주택 수</td><td>1주택</td><td>2주택</td></tr>
+      <tr><td>분담금 / 환급</td><td class="good">5.07억 환급</td><td>3.21억 납부</td></tr>
+      <tr><td>먼저 파는 집 양도세</td><td>12억까지 비과세, 초과분 장특공 최대 80%</td><td class="bad">과세. 장특공 최대 30%, 중과 시 공제 0 + 20%p</td></tr>
+      <tr><td>일시적 2주택 특례</td><td>해당 없음</td><td>두 채의 취득일이 같아 적용 불가</td></tr>
+      <tr><td>남은 1채 양도</td><td>—</td><td>1주택 비과세·표2 적용. 보유기간은 종전 취득일부터 이어짐</td></tr>
+      <tr><td>종합부동산세</td><td>공제 12억, 고령자·장기보유 세액공제 최대 80%</td><td>공제 9억, 세액공제 없음</td></tr>
+      <tr><td>재산세 공정시장가액비율</td><td>45% (1세대1주택)</td><td>60%</td></tr>
     </tbody>
   </table></div>
 
-  <div class="bars" aria-label="잠실5단지 34평형 시나리오별 양도세 합계">
+  <h3>시뮬레이션 가정</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>항목</th><th>내용</th></tr></thead>
+    <tbody>
+      <tr><td>고객</td><td>34평형, 2016.10 취득가 10억, 1세대1주택, 이주(2027.8) 전까지 거주</td></tr>
+      <tr><td>일정</td><td>관리처분인가 2027.6, 입주 2035.6, 이전고시 2035.9 (가정), 양도 2038.10 (소형 전매제한 3년 경과 후)</td></tr>
+      <tr><td>안내서 금액</td><td>평가액 39억 6,468만, 권리가액 35억 3,808만, 분양가 84㎡ 30.31억 · 59㎡ 23.50억 · 39㎡ 15.10억</td></tr>
+      <tr><td>신축 시세</td><td>조합원 분양가 × 1.5 → 84㎡ 45.46억, 59㎡ 35.25억, 39㎡ 22.64억</td></tr>
+      <tr><td>장특공률</td><td>1주택: 기존건물분 80%, 청산금납부분 52%(보유 11년 40% + 신축 거주 3년 12%) / 2주택: 30%, 22%</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>양도소득세 비교 (지방소득세 포함)</h3>
+  <div class="bars keep" aria-label="시나리오별 양도세 합계">
     <div class="bar"><div class="lab">A. 84㎡ 1채<small>환급분 697만 + 84㎡ 양도 2억 919만</small></div><div class="track"><div class="fill" style="width:12%"></div><span>2억 1,616만</span></div></div>
-    <div class="bar"><div class="lab">B. 39㎡ 먼저 → 59㎡<small>39㎡ 일반세율 5억 3,351만 + 59㎡ 1억 3,383만</small></div><div class="track"><div class="fill o" style="width:36%"></div><span>6억 6,734만</span></div></div>
-    <div class="bar"><div class="lab">B. 59㎡ 먼저 → 39㎡<small>59㎡ 일반세율 8억 7,153만 + 39㎡ 4,812만</small></div><div class="track"><div class="fill o" style="width:49%"></div><span>9억 1,965만</span></div></div>
-    <div class="bar"><div class="lab">B. 39㎡ 먼저 (중과) → 59㎡<small>39㎡ 중과 11억 7,519만 + 59㎡ 1억 3,383만</small></div><div class="track"><div class="fill r" style="width:70%"></div><span>13억 902만</span></div></div>
+    <div class="bar"><div class="lab">B. 39㎡ 먼저 → 59㎡<small>39㎡ 5억 3,351만 + 59㎡ 1억 3,383만</small></div><div class="track"><div class="fill o" style="width:36%"></div><span>6억 6,734만</span></div></div>
+    <div class="bar"><div class="lab">B. 59㎡ 먼저 → 39㎡<small>59㎡ 8억 7,153만 + 39㎡ 4,812만</small></div><div class="track"><div class="fill o" style="width:49%"></div><span>9억 1,965만</span></div></div>
+    <div class="bar"><div class="lab">B. 39㎡ 먼저 (중과) → 59㎡<small>39㎡ 11억 7,519만 + 59㎡ 1억 3,383만</small></div><div class="track"><div class="fill r" style="width:70%"></div><span>13억 902만</span></div></div>
   </div>
 
   <div class="tbl"><table>
-    <thead><tr><th>시나리오</th><th class="num">양도세 합계</th><th class="num">보유세 3년<br>(2035~2038)</th><th class="num">세후 순자산</th></tr></thead>
+    <thead><tr><th>단계</th><th class="num">양도차익</th><th class="num">과세 차익</th><th class="num">장특공</th><th class="num">세액</th></tr></thead>
     <tbody>
-      <tr><td>A. 84㎡ 1채 (+환급 5.07억)</td><td class="num good">2억 1,616만</td><td class="num">약 3,700만</td><td class="num good">약 48.01억</td></tr>
-      <tr><td>B. 39㎡ 먼저, 일반세율 (분담금 3.21억)</td><td class="num">6억 6,734만</td><td class="num">약 8,900만</td><td class="num">약 47.11억</td></tr>
-      <tr><td>B. 59㎡ 먼저, 일반세율</td><td class="num">9억 1,965만</td><td class="num">약 8,900만</td><td class="num">약 44.59억</td></tr>
-      <tr><td>B. 39㎡ 먼저, 2주택 중과</td><td class="num bad">13억 902만</td><td class="num">약 8,900만</td><td class="num bad">약 40.70억</td></tr>
+      <tr><td>A. 84㎡ 45.46억 (1주택, 전체 80%)</td><td class="num">36.74억</td><td class="num">27.04억</td><td class="num">21.63억</td><td class="num good">2억 919만</td></tr>
+      <tr><td>B-1. 39㎡ 22.64억 먼저 (2주택, 30% / 22%)</td><td class="num">17.47억</td><td class="num">17.48억</td><td class="num">5.21억</td><td class="num">5억 3,351만</td></tr>
+      <tr><td>　〃 중과 시 (공제 0, +20%p)</td><td class="num">17.47억</td><td class="num">17.48억</td><td class="num">0</td><td class="num bad">11억 7,519만</td></tr>
+      <tr><td>B-2. 59㎡ 35.25억 (1주택, 80% / 52%)</td><td class="num">27.21억</td><td class="num">17.94억</td><td class="num">14.23억</td><td class="num">1억 3,383만</td></tr>
+      <tr><td>B'. 59㎡ 먼저 (2주택) → 39㎡ (1주택)</td><td class="num">27.21억 / 17.47억</td><td class="num">27.20억 / 8.21억</td><td class="num">8.11억 / 6.51억</td><td class="num">8억 7,153만 / 4,812만</td></tr>
     </tbody>
   </table></div>
-  <p class="note">세후 순자산 = 양도가액 + 환급금 − 분담금 − 양도세 − 보유세(3년). 환급금·분담금의 시간가치, 재건축부담금(1인당 평균 추정 2.31억, 양도세 필요경비로 인정), 취득세는 반영하지 않았습니다.</p>
 
   <h3>보유세 (입주 후, 연간)</h3>
   <div class="tbl"><table>
@@ -361,31 +330,66 @@ footer{font-size:.8rem;color:var(--ink3);border-top:1px solid var(--rule);paddin
       <tr><td>B. 59㎡ + 39㎡ (2주택)</td><td class="num">24.32억 + 15.62억</td><td class="num">1,335만</td><td class="num">1,642만</td><td class="num bad">약 2,980만</td></tr>
     </tbody>
   </table></div>
+  <p class="note">재산세 계는 도시지역분·지방교육세 포함. 종부세 공정시장가액비율 60%, 재산세 중복분은 근사 차감, 세부담상한은 미반영. 재건축 신축의 종부세 장기보유 공제는 종전주택 취득일부터 기산합니다. 공사기간 중에는 토지로 재산세가 나옵니다.</p>
 
-  <div class="callout green">
-    <b>정리.</b> 34평형 조합원이 59+39를 받으면 양도세는 84㎡ 1채보다 3.1~6.1배 많고, 보유세도 매년 1,700만 원 이상 더 냅니다. 1+1은 8.3억(환급 포기 5.07억 + 분담금 3.21억)을 더 넣는 대신 집이 한 채 더 생깁니다. 그래서 일반세율이면 세후 순자산 차이는 1억 안쪽이지만, 2주택 중과가 적용되면 7억 넘게 벌어집니다. 장기 보유하며 39㎡를 자녀에게 넘기거나 임대할 계획이 아니라면 1채가 낫습니다. 1+1을 고른다면 차익이 작은 39㎡를 먼저 처분해야 합니다.
+  <h3>세후 순자산 (2038.10 양도 기준)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>시나리오</th><th class="num">양도세</th><th class="num">보유세 3년</th><th class="num">세후 순자산</th></tr></thead>
+    <tbody>
+      <tr><td>A. 84㎡ 1채 (+환급 5.07억)</td><td class="num good">2억 1,616만</td><td class="num">약 3,700만</td><td class="num good">약 48.01억</td></tr>
+      <tr><td>B. 39㎡ 먼저, 일반세율 (분담금 3.21억)</td><td class="num">6억 6,734만</td><td class="num">약 8,900만</td><td class="num">약 47.11억</td></tr>
+      <tr><td>B. 59㎡ 먼저, 일반세율</td><td class="num">9억 1,965만</td><td class="num">약 8,900만</td><td class="num">약 44.59억</td></tr>
+      <tr><td>B. 39㎡ 먼저, 2주택 중과</td><td class="num bad">13억 902만</td><td class="num">약 8,900만</td><td class="num bad">약 40.70억</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">세후 순자산 = 양도가액 + 환급금 − 분담금 − 양도세 − 보유세(2035~2038). 재건축부담금(1인당 평균 추정 2.31억, 필요경비 인정), 이주 기간 주거비, 자금의 시간가치, 취득세는 반영하지 않았습니다.</p>
+
+  <h3>1+1을 고려할 만한 경우</h3>
+  <div class="grid2">
+    <div><h3>임대 현금흐름</h3><p>은퇴 후 39㎡ 월세로 생활비를 마련하려는 경우. 월세 소득세와 지역가입자 건강보험료 증가도 함께 계산합니다.</p></div>
+    <div><h3>자녀 이전</h3><p>3년 전매제한 후 소형을 자녀에게 증여하거나 상속 재산을 나누기 쉽습니다. 증여세와 증여 취득세(조정지역 3억 이상 12%)를 따로 봅니다.</p></div>
+    <div><h3>1채 쪽이 나은 경우</h3><p>실거주 후 한 번에 팔 계획, 고령자 공제를 받을 나이, 다른 주택 취득 가능성이 있으면 1채가 단순하고 세금도 적습니다.</p></div>
+    <div><h3>1+1 탈락 위험</h3><p>59+39는 평가액 여유가 1.05억뿐이라 추첨 결과에 따라 추가 1채가 배정되지 않을 수 있습니다. 45+39는 여유가 있지만 2.65억을 환급받습니다.</p></div>
+  </div>
+
+  <div class="callout green keep" id="summary-box">
+    <b>정리</b>
+    <ul class="check" style="margin-top:.6rem">
+      <li><span><b>양도세:</b> 59+39는 84㎡ 1채보다 3.1~6.1배 많습니다(2.2억 vs 6.7억~13.1억).</span></li>
+      <li><span><b>보유세:</b> 1+1이 매년 약 1,750만 원 더 냅니다.</span></li>
+      <li><span><b>세후 순자산:</b> 1+1은 8.3억(환급 포기 5.07억 + 분담금 3.21억)을 더 넣고 집을 한 채 더 갖습니다. 일반세율이면 차이가 1억 안쪽이지만, 2주택 중과가 붙으면 7억 넘게 벌어집니다.</span></li>
+      <li><span><b>권고:</b> 39㎡를 장기 보유하며 임대하거나 자녀에게 넘길 계획이 없다면 84㎡ 1채가 낫습니다. 1+1을 고른다면 차익이 작은 39㎡를 먼저 처분합니다.</span></li>
+    </ul>
   </div>
 </section>
 
-<!-- ───────────── 상담 체크리스트 ───────────── -->
-<section id="ask">
-  <h2>4. 상담 때 고객께 확인할 사항</h2>
-  <ol class="plain">
-    <li>종전주택 취득일·취득가액, 실제 거주기간(전입·전출일), 명의(단독·부부 공동)</li>
-    <li>관리처분인가일, 관리처분계획서상 종전자산 평가액과 비례율·권리가액, 예상 분담금 또는 환급금</li>
-    <li>현재 세대원이 가진 다른 주택·입주권·분양권, 사업기간 중 대체주택 계획</li>
-    <li>신축 입주 여부와 예상 거주기간, 언제 팔 생각인지(입주권 상태 매도 가능성 포함)</li>
-    <li>1+1 신청 시 평형 조합과 예상 분양가, 소형 활용 계획(임대·증여·매도)</li>
-    <li>본인·배우자 나이(종부세 고령자 공제: 60세 20%, 65세 30%, 70세 40%)</li>
-    <li>잠실5단지 조합원 개별 통지문의 종전자산 평가액(수영장·정구장 지분 포함 여부)과 추정 분담금</li>
-    <li>분양신청 마감 2026.10.31 전에 1+1·평형을 확정해야 함 (마감 후 변경·철회 불가)</li>
-  </ol>
-</section>
-
 <footer>
-  <p>이 자료는 상담 설명용 계산 예시이며, 실제 세액은 개별 사실관계와 양도 시점의 세법에 따라 달라집니다. 중과 유예·조정대상지역·장특공 규정은 개정이 잦으므로 신고 전 현행 법령과 유권해석을 확인해야 합니다.</p>
-  <p>주요 근거: 소득세법 §88·§89·§95·§104, 같은 법 시행령 §155·§156의2·§159의4·§166, 종합부동산세법 §8·§9, 지방세법 §111·§111의2, 도시 및 주거환경정비법 §76.</p>
+  <p>이 자료는 상담 설명용 계산 예시이며, 실제 세액은 개별 사실관계(개별 통지문 금액, 동·호수, 취득가액, 거주기간)와 양도 시점의 세법에 따라 달라집니다. 신축 시세·관리처분인가일·이전고시일은 가정입니다.</p>
+  <p>주요 근거: 소득세법 §89·§95·§104, 같은 법 시행령 §155·§156의2·§159의4·§166, 종합부동산세법 §8·§9, 지방세법 §111·§111의2, 도시정비법 §39·§73·§76. 해석: 재산-736, 사전-2015-법령해석재산-0012, 조심2023서111, 서면-2021-부동산-1042, 조심2024서0090, 사전-2024-법규재산-0713.</p>
 </footer>
+
+<!-- ───────────── 4. 확인 사항 (별도 페이지) ───────────── -->
+<section id="ask">
+  <h2>상담 때 고객께 확인할 사항</h2>
+  <p class="meta">잠실5단지 34평형 조합원 · 분양신청 마감 2026.10.31 · 상담일 ____년 __월 __일 · 고객명 ______________</p>
+  <div class="tbl askform"><table>
+    <thead><tr><th class="no">#</th><th>확인 항목</th><th>왜 필요한가</th><th>고객 답변</th></tr></thead>
+    <tbody>
+      <tr><td class="no">1</td><td>종전주택 취득일·취득가액, 취득 시 취득세·중개수수료</td><td>인가 전 차익과 필요경비 계산</td><td class="ans"></td></tr>
+      <tr><td class="no">2</td><td>실제 거주기간 (전입·전출일)</td><td>표2 거주공제율, 비과세 거주요건</td><td class="ans"></td></tr>
+      <tr><td class="no">3</td><td>명의 (단독·부부 공동, 지분)</td><td>1+1 명의 분산, 종부세 인별 공제</td><td class="ans"></td></tr>
+      <tr><td class="no">4</td><td>개별 통지문의 종전자산 평가액, 수영장·정구장 지분 포함 여부</td><td>세금 계산 기준 금액 (평균값 39억 6,468만 대체)</td><td class="ans"></td></tr>
+      <tr><td class="no">5</td><td>신청 예정 평형, 1+1 여부와 조합 (59+39, 45+39)</td><td>분담금·환급금, 2주택 여부</td><td class="ans"></td></tr>
+      <tr><td class="no">6</td><td>세대원 전체의 다른 주택·입주권·분양권 보유 여부</td><td>1세대1주택 비과세·중과 판정</td><td class="ans"></td></tr>
+      <tr><td class="no">7</td><td>이주 기간(2027.8~2035) 거주 계획, 대체주택 구입 여부</td><td>대체주택 비과세 특례, 주택 수</td><td class="ans"></td></tr>
+      <tr><td class="no">8</td><td>신축 입주 여부와 예상 거주기간, 매도 예정 시기</td><td>청산금납부분 표2 요건(신축 2년 거주), 입주권 매도 여부</td><td class="ans"></td></tr>
+      <tr><td class="no">9</td><td>소형 활용 계획 (임대·자녀 증여·매도)</td><td>1+1 선택의 실익 판단</td><td class="ans"></td></tr>
+      <tr><td class="no">10</td><td>본인·배우자 나이</td><td>종부세 고령자 공제 (60세 20%, 65세 30%, 70세 40%)</td><td class="ans"></td></tr>
+      <tr><td class="no">11</td><td>매도·현금청산 고려 여부와 시점</td><td>관리처분인가 전 매도 시 전체 차익 장특공, 매수자 조합원 승계 예외(10년 보유·5년 거주)</td><td class="ans"></td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">분양신청 마감(2026.10.31) 후에는 평형·1+1 변경과 철회가 불가능하므로, 5·9·11번은 상담 당일 결론을 내는 것이 좋습니다.</p>
+</section>
 
 </div>
 </body>
