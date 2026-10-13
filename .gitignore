@@ -1,0 +1,14 @@
+# 데이터와 결과물은 레포에 올리지 않는다 (용량·개인정보)
+dart_cache/
+filings*.csv
+filings_hist/
+contacts_cache.csv
+audit_hours_rank.csv
+parse_failed.csv
+mailing_list.xlsx
+signals_*.csv
+signals_top*.xlsx
+exclude_clients.csv
+__pycache__/
+*.part
+~$*
