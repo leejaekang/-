@@ -39,7 +39,8 @@ def main():
     f = f.sort_values("rcept_no").drop_duplicates("corp_code", keep="last")
     print(f"목록 {n0}건 → 결산기 {n1}건 → 연결 제외 {n2}건 → 상장사 제외 {n3}건 → 처리 대상 {len(f)}건")
 
-    have = set(x[:-4] for x in os.listdir(CACHE_DIR) if x.endswith(".zip"))
+    have = set(x[:-4] for x in os.listdir(CACHE_DIR)          # 0바이트 = 끊긴 다운로드, 다시 받는다
+               if x.endswith(".zip") and os.path.getsize(os.path.join(CACHE_DIR, x)) > 0)
     todo = [r for r in f["rcept_no"] if r not in have]
     done_n = len(f) - len(todo)
     print(f"이미 받음 {done_n}건 / 남은 건수 {len(todo)}건")

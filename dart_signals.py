@@ -32,6 +32,7 @@ import re
 import sys
 import time
 import zipfile
+import zlib
 from collections import Counter
 from datetime import date
 from pathlib import Path
@@ -56,7 +57,7 @@ DEFAULT_CONFIG = {
         "multiple": 30,            # 예측대비배수: 1.0배 → 0점, multiple_full배 이상 → 만점
         "std_hours": 10,           # 자산 200억 이상만: 최소 표준감사시간 대비 초과
         "hours_yoy": 5,            # 전기 대비 감사시간 증가율이 hours_yoy_min 이상
-        "big4_small": 15,          # 자산 small_asset_eok 미만인데 Big4
+        "big4_small": 5,           # 자산 small_asset_eok 미만인데 Big4 (외국계·그룹감사가 많아 낮게 둔다)
         "mid_small": 8,            # 자산 small_asset_eok 미만인데 준대형
         "tenure_long": 8,          # 3개년 같은 감사인 (교체 검토 시점 가능성)
         "just_changed": -15,       # 2025.12 결산에서 막 교체 (초년도, 재교체 가능성 낮음)
@@ -88,6 +89,59 @@ DEFAULT_CONFIG = {
     "exclude_frequent_change": 2,  # 3개 결산기 사이 감사인 교체 횟수가 이 값 이상이면 제외
     "exclude_nonclean_opinion": True,
     "exclude_going_concern": True,
+    "exclude_foreign": True,       # 원문 주석에서 해외 모회사가 확인되면 제외 (그룹감사라 교체 가능성 낮음)
+    "exclude_conglomerate": True,  # 국내 대기업 계열(기업집단 문구, 지배기업·100% 주주가 아래 목록)이면 제외
+
+    # 대기업집단·금융지주 회사명. 공정위 지정 목록을 기억으로 옮긴 것이라 빠진 곳이 있을 수 있다. 고쳐 쓸 것.
+    # 원문에 나온 지배기업·주주 이름에서 (주)·공백을 뺀 뒤 비교한다. prefixes는 앞부분 일치, exact는 전체 일치.
+    "conglomerate_prefixes": [
+        "삼성전자", "삼성물산", "삼성생명", "삼성화재", "삼성에스디에스", "삼성SDS", "삼성에스디아이", "삼성SDI",
+        "삼성전기", "삼성중공업", "삼성증권", "삼성카드", "삼성바이오", "삼성이앤에이", "삼성엔지니어링",
+        "삼성디스플레이", "삼성웰스토리", "호텔신라", "제일기획", "에스원",
+        "에스케이", "SK",
+        "현대자동차", "현대모비스", "현대건설", "현대제철", "현대글로비스", "현대엔지니어링", "현대위아",
+        "현대로템", "현대오토에버", "현대트랜시스", "현대케피코", "현대카드", "현대캐피탈", "현대차증권", "이노션",
+        "엘지", "LG", "롯데", "호텔롯데", "포스코", "POSCO", "한화",
+        "에이치디현대", "HD현대", "에이치디한국조선해양", "HD한국조선해양", "현대중공업", "현대오일뱅크",
+        "현대삼호", "현대미포",
+        "농협금융", "농협경제", "농협중앙회", "농협지주", "농협네트웍스", "농협생명", "농협손해",
+        "엔에이치투자증권", "엔에이치농협", "NH",
+        "지에스칼텍스", "지에스건설", "지에스리테일", "지에스에너지", "지에스글로벌", "지에스이피에스",
+        "지에스이앤알", "지에스파워", "지에스홈쇼핑", "지에스네오텍", "GS", "신세계", "이마트",
+        "케이티앤지", "케이티스카이라이프", "케이티에스테이트", "케이티디에스", "케이티클라우드", "케이티알파",
+        "케이티아이에스", "케이티씨에스", "케이티엠앤에스", "케이티스튜디오", "케이티샛", "케이티커머스",
+        "케이티텔레캅", "KT",
+        "한진칼", "씨제이", "CJ", "엘에스전선", "엘에스일렉트릭", "엘에스엠앤엠", "엘에스엠트론", "엘에스네트웍스",
+        "엘에스머트리얼즈", "엘에스이링크", "엘에스글로벌", "엘에스아이앤디", "LS", "카카오", "두산",
+        "디엘이앤씨", "디엘케미칼", "디엘건설", "디엘에너지", "DL", "셀트리온",
+        "중흥건설", "중흥토건", "대우건설", "미래에셋", "네이버", "NAVER",
+        "현대백화점", "현대지에프홀딩스", "현대홈쇼핑", "현대그린푸드", "한섬", "부영주택", "쿠팡",
+        "한국앤컴퍼니", "한국타이어", "하림지주", "팬오션", "고려아연", "에이치엠엠", "HMM",
+        "효성중공업", "효성티앤씨", "효성첨단소재", "효성화학", "효성티앤에스", "에이치에스효성", "HS효성",
+        "에이치디씨", "HDC", "현대산업개발", "삼라마이다스", "에스엠상선", "대한해운",
+        "디비손해보험", "디비아이엔씨", "디비하이텍", "디비증권", "디비생명", "디비저축", "디비캐피탈", "디비금융",
+        "DB", "호반건설", "호반산업", "케이씨씨건설", "케이씨씨글라스", "케이씨씨실리콘", "KCC",
+        "장금상선", "코오롱", "넷마블",
+        "오씨아이", "OCI", "태영건설", "티와이홀딩스", "에스비에스", "SBS", "교보생명", "교보증권", "이랜드",
+        "넥슨", "엔엑스씨", "세아홀딩스", "세아제강", "세아베스틸", "글로벌세아", "세아상역",
+        "금호건설", "금호고속", "금호석유화학", "동원산업", "동원엔터프라이즈", "동원에프앤비", "동원시스템즈",
+        "에코프로", "태광산업", "흥국생명", "흥국화재", "엠디엠", "한국항공우주", "다우기술", "다우데이타", "키움증권",
+        "엘엑스홀딩스", "엘엑스인터내셔널", "엘엑스하우시스", "엘엑스세미콘", "엘엑스판토스", "엘엑스엠엠에이", "LX",
+        "동국제강", "동국홀딩스", "크래프톤", "에이케이홀딩스", "AK홀딩스", "애경",
+        "보성산업", "중앙홀딩스", "중앙일보", "제이티비씨", "콘텐트리중앙", "비지에프", "BGF",
+        "대방건설", "대방산업개발", "유진기업", "유진투자", "아모레퍼시픽", "아모레지",
+        "한솔홀딩스", "한솔제지", "한솔케미칼", "한솔테크닉스", "하이트진로", "농심",
+        "삼양홀딩스", "삼양사", "삼양식품", "삼양라운드스퀘어", "두나무", "사조산업", "사조대림", "사조시스템즈",
+        "소노인터내셔널", "대명소노", "원익홀딩스", "원익아이피에스", "하이브", "HYBE", "파라다이스",
+        "반도홀딩스", "반도건설", "아이에스지주", "아이에스동서", "엘아이지", "LIG",
+        "에이치엘홀딩스", "에이치엘만도", "에이치엘디앤아이", "에이치엘클레무브", "HL", "한라홀딩스",
+        "비엔케이", "BNK", "케이비금융", "케이비국민", "케이비증권", "케이비손해", "케이비캐피탈", "케이비부동산신탁",
+        "KB", "신한금융", "신한카드", "신한투자", "하나금융", "하나증권", "우리금융",
+        "디지비금융", "DGB", "제이비금융", "JB금융", "한국투자금융", "한국금융지주", "한국투자증권", "메리츠",
+    ],
+    # 은행은 넣지 않는다 (펀드 수탁자로서 '최대주주'에 이름이 오르는 경우가 대부분)
+    "conglomerate_exact": ["한진", "부영", "영풍", "삼천리", "신영", "기아", "호반", "사조", "원익", "태영", "효성",
+                           "대한항공", "지에스", "케이티", "엘에스", "디엘", "케이씨씨", "엘엑스"],
 
     # 입력 컬럼명 수동 지정 (자동 인식이 틀릴 때만). 예: {"multiple": "예측대비배수"}
     "column_map": {},
@@ -102,6 +156,8 @@ FILINGS_FILE = BASE / "filings.csv"
 HIST_DIR = BASE / "filings_hist"
 CACHE_DIR = BASE / "dart_cache"
 STAGE2_CACHE = BASE / "signals_stage2_cache.csv"
+FOREIGN_CACHE = BASE / "signals_foreign_cache.csv"
+CONTACTS_FILE = BASE / "contacts_cache.csv"
 EXCLUDE_FILE = BASE / "exclude_clients.csv"
 
 OUT_ALL = BASE / "signals_all.csv"
@@ -115,12 +171,12 @@ COL_CANDIDATES = {
     "corp_code": ["corp_code", "고유번호", "회사코드"],
     "corp_name": ["corp_name", "회사명", "기업명", "법인명"],
     "rcept_no": ["rcept_no", "접수번호"],
-    "assets": ["자산총계", "자산총액", "자산", "assets", "total_assets"],
-    "sales": ["매출액", "매출", "sales", "revenue"],
+    "assets": ["assets_eok", "자산(억)", "자산총계", "자산총액", "자산", "assets", "total_assets"],
+    "sales": ["revenue_eok", "매출(억)", "매출액", "매출", "sales", "revenue"],
     "multiple": ["예측대비배수", "배수", "multiple"],
-    "hours": ["감사시간_당기", "당기감사시간", "투입시간_당기", "감사시간(당기)", "당기_감사시간", "감사시간"],
+    "hours": ["hours", "감사시간_당기", "당기감사시간", "투입시간_당기", "감사시간(당기)", "당기_감사시간", "감사시간"],
     "hours_yoy": ["전기대비증가율", "증가율"],
-    "std_hours": ["최소표준감사시간", "최소 표준감사시간", "표준감사시간"],
+    "std_hours": ["최소표준시간", "최소표준감사시간", "최소 표준감사시간", "표준감사시간"],
     "address": ["주소", "adres", "address", "소재지"],
     "ceo": ["대표자", "대표이사", "ceo_nm"],
 }
@@ -193,7 +249,11 @@ def find_col(df, key, cfg):
     for cand in cands:
         cn = re.sub(r"\s+", "", cand)
         for c, n in norm.items():
-            if cn in n and not (key == "hours" and re.search("전기|표준|증가", n)):
+            if key == "hours" and re.search("전기|표준|증가", n):
+                continue
+            if key in ("assets", "sales") and re.search("per|시간", n):   # '시간_per_자산억' 같은 비율 컬럼
+                continue
+            if cn in n:
                 return c
     return None
 
@@ -284,6 +344,59 @@ def fetch_history(cfg, refresh=False):
             df.to_csv(out, index=False, encoding="utf-8-sig")
             print(f"  {out.name}: {len(df):,}건")
     print("[완료] 목록 수집")
+
+
+# ----------------------------------------------------------------------------
+# 기업개황(주소·대표자) 수집: dart_contacts.py와 같은 contacts_cache.csv를 쓴다
+# ----------------------------------------------------------------------------
+CONTACT_FIELDS = [("대표자", "ceo_nm"), ("주소", "adres"), ("전화", "phn_no"), ("팩스", "fax_no"),
+                  ("홈페이지", "hm_url"), ("업종코드", "induty_code"), ("설립일", "est_dt"), ("결산월", "acc_mt")]
+
+
+def fetch_contacts(df, cfg, n):
+    """근접 가점 최대치를 받으면 상위 n에 들 수 있는 후보만 조회한다. 새로 받은 게 있으면 True"""
+    cand = df[~df["제외"]]
+    if cand.empty:
+        return False
+    cut = cand["신호점수"].iloc[min(n, len(cand)) - 1]
+    reach = cand[cand["신호점수"] - cand["p_근접"] >= cut - max(p for _, p in cfg["proximity"])]
+    cache = read_table(CONTACTS_FILE) if CONTACTS_FILE.exists() else pd.DataFrame(columns=["corp_code"])
+    cache["corp_code"] = cache["corp_code"].astype(str).str.zfill(8)
+    done = set(cache["corp_code"])
+    todo = [c for c in reach["corp_code"] if c not in done]
+    print(f"[기업개황] 상위 {n} 커트라인 {cut} → 대상 {len(reach):,}사, 새로 조회 {len(todo):,}건")
+    if not todo:
+        return False
+
+    key, s, rows = api_key(), requests.Session(), []
+    try:
+        for i, code in enumerate(todo, 1):
+            for attempt in range(4):
+                try:
+                    data = s.get(f"{API}/company.json", params={"crtfc_key": key, "corp_code": code}, timeout=30).json()
+                    break
+                except (requests.RequestException, ValueError):
+                    if attempt == 3:
+                        raise
+                    time.sleep(2 ** (attempt + 1))
+            st = data.get("status")
+            if st == "020":
+                print("  ! 하루 호출 한도 초과(020). 받은 것까지 저장합니다. 내일 같은 명령으로 이어받으면 됩니다.")
+                break
+            row = {"corp_code": code}
+            if st == "000":
+                row.update({k: data.get(v, "") for k, v in CONTACT_FIELDS})
+            else:
+                row["조회오류"] = data.get("message", str(st))
+            rows.append(row)
+            if i % 200 == 0:
+                print(f"  {i:,}/{len(todo):,}")
+            time.sleep(0.15)
+    finally:
+        if rows:
+            out = pd.concat([cache, pd.DataFrame(rows)], ignore_index=True)
+            safe_write(lambda p: out.to_csv(p, index=False, encoding="utf-8-sig"), CONTACTS_FILE)
+    return bool(rows)
 
 
 def load_filings():
@@ -380,6 +493,7 @@ def load_base(cfg, filings, input_path=None):
     else:
         sys.exit("[오류] corp_code·rcept_no 둘 다 없어 공시 목록과 연결할 수 없습니다.")
 
+    out["접수번호_입력"] = df[cols["rcept_no"]] if cols["rcept_no"] else np.nan   # 실제 파싱한 원문
     out["회사명"] = df[cols["corp_name"]] if cols["corp_name"] else ""
     raw_assets = to_num(df[cols["assets"]])
     factor, unit = detect_unit_factor(raw_assets, cfg["asset_unit"])
@@ -434,7 +548,8 @@ def add_stage1(df, filings, cfg):
     df["감사인"] = cc.map(s0["auditor"])
     df["감사인_전년"] = cc.map(s1["auditor"])
     df["감사인_전전년"] = cc.map(s2["auditor"])
-    df["접수번호"] = cc.map(s0["rcept_no_latest"])
+    # 목록의 최신 접수번호는 연결감사보고서일 수 있어, 입력(파싱한 별도 보고서)의 접수번호를 우선한다
+    df["접수번호"] = df["접수번호_입력"].fillna(cc.map(s0["rcept_no_latest"]))
     df["접수번호_전년"] = cc.map(s1["rcept_no_latest"])
     df["제출일"] = cc.map(s0["orig_dt"])
     df["제출일_전년"] = cc.map(s1["orig_dt"])
@@ -503,12 +618,12 @@ def add_stage1(df, filings, cfg):
 # ----------------------------------------------------------------------------
 # 2단계: 원문 판독
 # ----------------------------------------------------------------------------
+STAGE2_VER = "2"           # 판독 규칙을 고치면 올린다 → 캐시를 버리고 다시 판독
 NAME_STOP = {"이사회", "귀중", "귀하", "변경", "선임", "사임", "취임", "회장", "사장", "부회장", "부사장",
-             "외", "및", "등", "공동", "각자", "직무대행", "명의", "서명", "날인", "주식회사"}
-# '대표이사' 뒤에 공백이나 콜론이 있어야 한다 ('대표이사의', '대표이사는' 배제).
-# 이름: 붙여 쓴 2~4자, 또는 '홍 길 동'처럼 한 칸씩 띄운 형태
-CEO_RE = re.compile(r"대\s*표\s*이\s*사(?:\s+(?:사장|회장|부회장))?(?:\s*[:：]\s*|\s+)"
-                    r"([가-힣]{2,4}(?![가-힣])|[가-힣](?:\s[가-힣]){1,3}(?![가-힣]))")
+             "외", "및", "등", "공동", "각자", "직무대행", "명의", "서명", "날인", "주식회사", "공동대표", "각자대표"}
+# 재무제표 표지의 '○○ 주식회사 대표이사 홍길동 본점 소재지' 에서만 읽는다.
+# 본문의 다른 '대표이사'는 감사인(회계법인) 대표이사 서명이거나 특수관계자 표라서 쓰지 않는다.
+CEO_RE = re.compile(r"대\s*표\s*이\s*사\s*[:：]?\s*(.{2,60}?)\s*본\s*점\s*소\s*재\s*지")
 
 
 def zip_texts(path, rcept_no):
@@ -532,15 +647,17 @@ def zip_texts(path, rcept_no):
 
 
 def extract_ceo(text):
+    """표지의 대표이사 이름(공동대표면 여러 명)을 쉼표로 이어 돌려준다. 못 찾으면 ''"""
+    m = CEO_RE.search(text[:15000])
+    if not m:
+        return ""
     names = []
-    for m in CEO_RE.finditer(text):
-        n = re.sub(r"\s", "", m.group(1))
-        if n in NAME_STOP or n[0] in "및등외의는께":
-            continue
-        if any(s in n for s in ("이사회", "귀중", "회사")):
-            continue
-        names.append(n)
-    return Counter(names).most_common(1)[0][0] if names else ""
+    for part in re.split(r"[,.·ㆍ/]|및|\s{2,}", m.group(1)):
+        tokens = part.split()
+        if tokens and all(len(t) == 1 for t in tokens):      # '홍 길 동'
+            tokens = ["".join(tokens)]
+        names += [t for t in tokens if re.fullmatch(r"[가-힣A-Za-z]{2,}", t) and t not in NAME_STOP]
+    return ",".join(names)
 
 
 def read_opinion(text):
@@ -551,7 +668,7 @@ def read_opinion(text):
         op = "부적정"
     elif re.search(r"한정\s*의견\s*근거", head):
         op = "한정"
-    elif re.search(r"적정하게\s*표시하고\s*있습니다", head):
+    elif re.search(r"(?:공정|적정)하게\s*표시하고\s*있습니다", head):
         op = "적정"
     else:
         op = "미확인"
@@ -559,9 +676,121 @@ def read_opinion(text):
     return op, gc
 
 
+# ----------------------------------------------------------------------------
+# 외국계 판별: 원문 주석(회사의 개요·특수관계자)에서 해외 모회사 표현을 찾는다
+# ----------------------------------------------------------------------------
+FOREIGN_RULE_VER = "2"     # 외국계·대기업 계열 규칙을 고치면 올린다 → 캐시를 버리고 다시 판독
+COUNTRY = (r"(?:미국|일본|독일|프랑스|영국|중국|홍콩|싱가포르|네덜란드|스위스|스웨덴|대만|이탈리아|캐나다|호주|"
+           r"룩셈부르크|덴마크|벨기에|아일랜드|노르웨이|핀란드|오스트리아|스페인|인도|이스라엘|케이만|버진)")
+LATIN = r"[A-Za-z][A-Za-z0-9&.,'()\-/]*(?: [A-Za-z0-9&.,'()\-/]+)+"     # 영문 2단어 이상 = 해외 법인명
+OVERVIEW_RE = re.compile(r"회사의\s*개요|일반\s*사항|회사의\s*현황|당사의\s*개요|일반적\s*사항")
+# (표시명, 개요 주석에서만 찾을지, 패턴)
+FOREIGN_RULES = [
+    ("외국인투자기업", True, re.compile(r"외국인\s*투자\s*(?:기업|법인|촉진법)")),
+    ("해외법인 100% 출자", True, re.compile(
+        LATIN + r"\s?(?:이|가|으로서|로서|에서)\s?[^.]{0,40}?(?:100(?:\.0+)?\s?%|전액|전부)")),
+    ("해외법인 주주", True, re.compile(COUNTRY + r"국?\s?(?:법인|소재|의)[가-힣 ]{0,10}" + LATIN)),
+    ("해외 지배기업", False, re.compile(
+        r"(?:지배기업|지배회사|지배주주|모회사|모기업|최대주주)(?:은|는|인|이며)?[\s:(]{0,3}"
+        r"(?:" + COUNTRY + r"[가-힣]{0,5}\s?)?" + LATIN)),
+]
+
+
+def detect_foreign(text):
+    """해외 모회사로 보이면 '근거: 원문 일부', 아니면 ''"""
+    body = text[5000:]                       # 목차·감사보고서 본문은 건너뜀
+    m = OVERVIEW_RE.search(body)
+    overview = body[m.start():m.start() + 2500] if m else ""
+    for label, overview_only, rx in FOREIGN_RULES:
+        src = overview if overview_only else body
+        for hit in rx.finditer(src):
+            if re.match(r"\s?(?:\(주\)|㈜|주식회사)", src[hit.end():hit.end() + 6]):   # 영문 표기 국내 법인
+                continue
+            return f"{label}: {hit.group(0)[:70]}"
+    return ""
+
+
+# ----------------------------------------------------------------------------
+# 국내 대기업 계열 판별: 공정거래법 기업집단 문구, 또는 지배기업·100% 주주가 대기업집단 회사
+# ----------------------------------------------------------------------------
+FTC_RE = re.compile(r"(?:대규모|공시대상|상호출자제한)\s*(?:기업\s*)?집단|기업\s*집단\s*(?:소속|계열|에\s*속)")
+CO = r"(?:\(주\)|㈜|주식회사)"
+NAME = r"[가-힣A-Za-z0-9&]{2,20}"
+PARENT_RE = re.compile(r"(?:최상위\s*지배(?:기업|회사|자)|지배기업|지배회사|지배주주|모회사|모기업|최대주주)"
+                       r"(?:은|는|인|이며)?[\s:(]{0,3}(" + CO + r"?\s?" + NAME + r")")
+# 개요 주석에서 '(주)○○ ... 100%' : 주주가 한 곳인 표, 또는 '○○(주)가 100%를 소유'
+OWNER_RE = re.compile(r"(" + CO + r"\s?" + NAME + r"|" + NAME + r"\s?" + CO + r")"
+                      r"(?:[^가-힣]{0,45}?(?<![\d,.])100(?:\.0+)?(?![\d,])"
+                      r"|(?:이|가|에서|로서|으로서)\s[^.]{0,40}?100(?:\.0+)?\s?%)")
+FUND_RE = re.compile(r"사모|투자신탁|투융자|펀드|신탁|조합|유동화|BTL|비티엘|리츠|투자회사|특별자산")
+PARTICLE = r"(?:이|가|은|는|의|으로|로|과|와|에|이며|이고|입니다)?"
+
+
+def group_of(name, cfg):
+    """회사명이 대기업집단 목록에 있으면 맞은 항목, 아니면 ''"""
+    n = re.sub(CO + r"|\s", "", name)
+    if FUND_RE.search(n):                     # 펀드·SPC 명의는 계열사가 아니다
+        return ""
+    for p in cfg["conglomerate_prefixes"]:
+        if n.startswith(p):
+            if p.isascii() and n[len(p):len(p) + 1].isascii() and n[len(p):len(p) + 1].isalpha():
+                continue                      # 'KB' ≠ 'KBS', 'LG' ≠ 'LGMG'
+            return p
+    for e in cfg["conglomerate_exact"]:
+        if re.fullmatch(re.escape(e) + PARTICLE, n):
+            return e
+    return ""
+
+
+def detect_group(text, cfg):
+    """국내 대기업 계열로 보이면 '근거: 원문 일부', 아니면 ''"""
+    body = text[5000:]
+    m = FTC_RE.search(body)
+    if m:
+        return "기업집단 문구: " + body[max(0, m.start() - 25):m.end() + 10].strip()
+    for hit in PARENT_RE.finditer(body):
+        if group_of(hit.group(1), cfg):
+            return "지배기업: " + hit.group(0)[:60]
+    m = OVERVIEW_RE.search(body)
+    overview = body[m.start():m.start() + 2500] if m else ""
+    for hit in OWNER_RE.finditer(overview):
+        if group_of(hit.group(1), cfg):
+            return "100% 주주: " + hit.group(0)[:60]
+    return ""
+
+
+def scan_parent(df, cfg):
+    """원문에서 해외 모회사·국내 대기업 계열 여부 판독 (규칙이나 목록이 바뀌면 캐시를 버린다)"""
+    ver = FOREIGN_RULE_VER + "-" + str(zlib.crc32(json.dumps(
+        [cfg["conglomerate_prefixes"], cfg["conglomerate_exact"]], ensure_ascii=False).encode()))
+    cache = {}
+    if FOREIGN_CACHE.exists():
+        c = read_table(FOREIGN_CACHE)
+        if "ver" in c and "group" in c and (c["ver"] == ver).all():
+            cache = dict(zip(c["rcept_no"], zip(c["foreign"].fillna(""), c["group"].fillna(""))))
+    need = [r for r in df["접수번호"].dropna().unique() if r not in cache]
+    if need:
+        print(f"[모회사] 원문 {len(need):,}건 판독")
+    for i, rno in enumerate(need, 1):
+        try:
+            main, _ = zip_texts(CACHE_DIR / f"{rno}.zip", rno)
+            cache[rno] = (detect_foreign(main), detect_group(main, cfg))
+        except (zipfile.BadZipFile, OSError):
+            pass                              # 원문 없음·깨짐: 판별 안 함 (다음 실행 때 다시 시도)
+        if i % 5000 == 0:
+            print(f"  {i:,}/{len(need):,}")
+    if need:
+        c = pd.DataFrame({"rcept_no": list(cache), "foreign": [v[0] for v in cache.values()],
+                          "group": [v[1] for v in cache.values()], "ver": ver})
+        safe_write(lambda p: c.to_csv(p, index=False, encoding="utf-8-sig"), FOREIGN_CACHE)
+    df["외국계"] = df["접수번호"].map({k: v[0] for k, v in cache.items()}).fillna("")
+    df["대기업계열"] = df["접수번호"].map({k: v[1] for k, v in cache.items()}).fillna("")
+    return df
+
+
 def download_doc(key, rcept_no, session):
     path = CACHE_DIR / f"{rcept_no}.zip"
-    if path.exists():
+    if path.exists() and path.stat().st_size > 0:   # 0바이트 = 끊긴 다운로드, 다시 받는다
         return path, "cached"
     r = session.get(f"{API}/document.xml", params={"crtfc_key": key, "rcept_no": rcept_no}, timeout=60)
     if r.content[:2] == b"PK":
@@ -577,9 +806,18 @@ def download_doc(key, rcept_no, session):
     return None, st
 
 
+def load_stage2_cache():
+    """이전 2단계 판독 결과. 판독 규칙 버전이 다르면 빈 표"""
+    if STAGE2_CACHE.exists():
+        c = read_table(STAGE2_CACHE)
+        if "ver" in c and (c["ver"] == STAGE2_VER).all():
+            return c.set_index("rcept_no")
+    return pd.DataFrame()
+
+
 def run_stage2(df, cfg, n):
     CACHE_DIR.mkdir(exist_ok=True)
-    cache = read_table(STAGE2_CACHE).set_index("rcept_no") if STAGE2_CACHE.exists() else pd.DataFrame()
+    cache = load_stage2_cache()
     cache = cache.to_dict("index") if len(cache) else {}
 
     targets = df[~df["제외"]].head(n)
@@ -590,7 +828,7 @@ def run_stage2(df, cfg, n):
     key, session, limited = None, requests.Session(), False
     for i, rno in enumerate(need, 1):
         path = CACHE_DIR / f"{rno}.zip"
-        if not path.exists():
+        if not path.exists() or path.stat().st_size == 0:
             if limited:
                 continue
             key = key or api_key()
@@ -616,6 +854,7 @@ def run_stage2(df, cfg, n):
             print(f"  {i}/{len(need)}")
 
     c = pd.DataFrame.from_dict(cache, orient="index")
+    c["ver"] = STAGE2_VER
     c.index.name = "rcept_no"
     safe_write(lambda p: c.to_csv(p, encoding="utf-8-sig"), STAGE2_CACHE)
     return c
@@ -628,17 +867,15 @@ def apply_stage2(df, cache, cfg):
     df["대표이사_원문"] = [get(r, "ceo") for r in df["접수번호"]]
     df["대표이사_전년원문"] = [get(r, "ceo") for r in df["접수번호_전년"]]
 
-    def norm(n):
-        return re.sub(r"[^가-힣A-Za-z]", "", str(n)) if isinstance(n, str) else ""
+    def names(v):
+        return set(v.split(",")) - {""} if isinstance(v, str) else set()
 
+    # 올해·전년 원문 표지끼리만 비교한다 (기업개황 대표자는 조회 시점 기준이라 섞지 않는다).
+    # 공동대표 중 한 명이라도 그대로면 변경으로 보지 않는다.
     changed = []
-    for cur, ceo_now, prev in zip(df["대표이사_원문"], df["대표자"], df["대표이사_전년원문"]):
-        now = norm(cur) or norm(ceo_now)      # 올해 원문 → 없으면 기업개황 현재 대표자
-        prev = norm(prev)
-        if not now or not prev:
-            changed.append(np.nan)
-        else:
-            changed.append(prev not in now and now not in prev)
+    for cur, prev in zip(df["대표이사_원문"], df["대표이사_전년원문"]):
+        now, prev = names(cur), names(prev)
+        changed.append(np.nan if not now or not prev else not (now & prev))
     df["대표이사변경"] = changed
     df["p_대표이사"] = np.where(df["대표이사변경"] == True, cfg["weights"]["ceo_change"], 0).astype(float)  # noqa: E712
     return df
@@ -671,6 +908,10 @@ def finalize(df, cfg):
     flag(df["자산_억"] > cfg["max_assets_eok"], f"자산 {cfg['max_assets_eok']}억 초과")
     flag(df["감사인"].map(short_auditor).isin(cfg["our_firm"]), "현 감사인이 우리 법인")
     flag(df["감사인교체횟수"] >= cfg["exclude_frequent_change"], "감사인 잦은 교체")
+    if cfg["exclude_foreign"] and "외국계" in df:
+        flag(df["외국계"] != "", "외국계(해외 모회사)")
+    if cfg["exclude_conglomerate"] and "대기업계열" in df:
+        flag(df["대기업계열"] != "", "국내 대기업 계열")
     flag(df["corp_code"].isin(codes), "제외목록(기장 등)")
     flag(df["회사명"].fillna("").map(lambda s: re.sub(r"\(주\)|주식회사|\s", "", s)).isin(names) & (len(names) > 0),
          "제외목록(기장 등)")
@@ -706,6 +947,8 @@ def write_outputs(df, cfg):
     excl = df[df["제외"]]
     safe_write(lambda p: df.to_csv(p, index=False, encoding="utf-8-sig"), OUT_ALL)
     safe_write(lambda p: excl[["회사명", "corp_code", "제외사유", "자산_억", "감사인", "감사인_전년", "감사인_전전년"]]
+                  .assign(외국계=excl["외국계"] if "외국계" in excl else "",
+                       대기업계열=excl["대기업계열"] if "대기업계열" in excl else "")
                .to_csv(p, index=False, encoding="utf-8-sig"), OUT_EXCL)
 
     top = keep.head(cfg["top_n"])
@@ -750,6 +993,9 @@ def main():
     ap.add_argument("--refresh", action="store_true", help="--fetch-history 시 이미 받은 달도 다시 받기")
     ap.add_argument("--stage2", action="store_true", help="상위 후보 원문으로 대표이사 변경·감사의견 확인")
     ap.add_argument("--stage2-n", type=int, default=400)
+    ap.add_argument("--fetch-contacts", action="store_true",
+                    help="근접 가점을 받으면 상위 N에 들 수 있는 후보의 주소·대표자를 기업개황 API로 받기")
+    ap.add_argument("--contacts-n", type=int, default=400, help="--fetch-contacts 기준 순위 (기본 400)")
     ap.add_argument("--write-config", action="store_true", help="signals_config.json 기본값 생성 후 종료")
     a = ap.parse_args()
 
@@ -771,17 +1017,24 @@ def main():
         return
 
     filings = load_filings()
-    df = load_base(cfg, filings, a.input)
-    df = add_stage1(df, filings, cfg)
-    df = finalize(df, cfg)
+
+    def stage1():
+        df = load_base(cfg, filings, a.input)
+        df = add_stage1(df, filings, cfg)
+        if cfg["exclude_foreign"] or cfg["exclude_conglomerate"]:
+            df = scan_parent(df, cfg)
+        return finalize(df, cfg)
+
+    df = stage1()
+    if a.fetch_contacts and fetch_contacts(df, cfg, a.contacts_n):
+        df = stage1()                        # 새로 받은 주소로 근접 가점을 다시 계산
 
     if a.stage2:
         cache = run_stage2(df, cfg, a.stage2_n)
         df = apply_stage2(df.drop(columns=["순위", "제외", "제외사유", "신호점수", "신호요약"]), cache, cfg)
         df = finalize(df, cfg)
-    elif STAGE2_CACHE.exists():
+    elif len(cache := load_stage2_cache()):
         # 이전 2단계 판독 결과가 있으면 재사용 (API 호출 없음)
-        cache = read_table(STAGE2_CACHE).set_index("rcept_no")
         df = apply_stage2(df.drop(columns=["순위", "제외", "제외사유", "신호점수", "신호요약"]), cache, cfg)
         df = finalize(df, cfg)
         print("[2단계] 기존 판독 캐시 반영")

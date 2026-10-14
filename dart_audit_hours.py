@@ -93,7 +93,7 @@ def decode(raw):
 def get_doc_texts(rcept_no):
     os.makedirs(CACHE_DIR, exist_ok=True)
     path = os.path.join(CACHE_DIR, f"{rcept_no}.zip")
-    if not os.path.exists(path):
+    if not os.path.exists(path) or os.path.getsize(path) == 0:   # 0바이트 = 끊긴 다운로드, 다시 받는다
         r = requests.get(f"{API}/document.xml",
                          params=dict(crtfc_key=KEY, rcept_no=rcept_no), timeout=60)
         if r.content[:2] != b"PK":            # zip이 아니면 오류 응답
@@ -101,8 +101,10 @@ def get_doc_texts(rcept_no):
             if "020" in msg:
                 raise LimitReached("원문 다운로드 중 일일 한도 초과")
             raise ValueError(msg)
-        with open(path, "wb") as f:
+        tmp = path + ".part"
+        with open(tmp, "wb") as f:
             f.write(r.content)
+        os.replace(tmp, path)
         time.sleep(0.3)
     with zipfile.ZipFile(path) as z:
         return [decode(z.read(n)) for n in z.namelist()]
