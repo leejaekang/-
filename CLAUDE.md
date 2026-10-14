@@ -91,7 +91,7 @@ K-IFRS 90건 제외 → 410건 → 자산 1,500억 이하 365건. 회귀계수 �
   우편 수신인은 `signals_top.xlsx`의 `대표이사_원문`을 우선 쓴다.
 - `mailing_list.xlsx`는 이제 `dart_signals.py --write-mailing`이 만든다 (신호 점수 상위 150곳, 10.14 생성).
   `dart_contacts.py`는 예측대비배수 순으로만 자르는 옛 방식이라 발송 명단용으로는 쓰지 않는다. `dart_signals.py`는 `mailing_list.xlsx`를 입력으로 읽지 않는다.
-- 커버레터·주소 라벨 초안 생성 (`build_mail.py`, 10.14). 서명은 '공인회계사 이재강' 명의 초안, QR은 없음 (연결할 URL 미정).
+- 커버레터·주소 라벨 초안 생성 (`build_mail.py`, 10.14). 서명은 '대표이사 송재철' 명의(연락처의 담당자는 이재강 회계사), QR은 없음 (연결할 URL 미정).
   라벨 규격(2열×7행, 99.1×38.1mm)은 실제 라벨지와 대조 전 → 일반 용지에 시험 인쇄 필요.
 - **남은 것**: 상위 150곳 검토 → `exclude_clients.csv`(기장 거래처) 반영 후 `--write-mailing`·`build_mail.py` 다시 → 문안 확정 → 11월 중순 발송
 
