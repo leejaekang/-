@@ -3,8 +3,8 @@
 감사인 교체 가능성 신호 점수 (지인회계법인 외부감사 영업용, 내부 타깃팅 전용)
 
 입력
-  - mailing_list.xlsx (있으면 우선) 또는 audit_hours_rank.csv
-  - contacts_cache.csv (주소·대표자 보강, 있으면)
+  - audit_hours_rank.csv
+  - contacts_cache.csv (주소·대표자·업종코드. --fetch-contacts로 상위권만 받는다)
   - filings.csv (2026 접수분) + filings_hist/*.csv (2024·2025 접수분, --fetch-history로 수집)
   - exclude_clients.csv (기장 거래처 등 제외 목록, 있으면. corp_code 또는 회사명 컬럼)
 
@@ -12,6 +12,7 @@
   - signals_all.csv       전체 후보와 신호별 점수
   - signals_excluded.csv  제외된 회사와 사유
   - signals_top.xlsx      상위 N곳 (기본 150)
+  - mailing_list.xlsx     --write-mailing: 상위 N곳 우편 발송·전화 후속 명단 (이전 파일은 backup으로 보관)
   - signals_stage2_cache.csv  2단계 원문 판독 캐시
 
 사용 (PowerShell, 실행 전 결과 엑셀 파일은 닫아 둘 것)
@@ -29,6 +30,7 @@ import json
 import math
 import os
 import re
+import shutil
 import sys
 import time
 import zipfile
@@ -163,6 +165,7 @@ EXCLUDE_FILE = BASE / "exclude_clients.csv"
 OUT_ALL = BASE / "signals_all.csv"
 OUT_EXCL = BASE / "signals_excluded.csv"
 OUT_TOP = BASE / "signals_top.xlsx"
+OUT_MAIL = BASE / "mailing_list.xlsx"
 
 API = "https://opendart.fss.or.kr/api"
 
@@ -465,16 +468,10 @@ def load_base(cfg, filings, input_path=None):
     if input_path:
         src = Path(input_path)
     else:
-        mail, rank = BASE / "mailing_list.xlsx", BASE / "audit_hours_rank.csv"
-        src = rank if rank.exists() else None
-        # mailing_list.xlsx는 순위 파일보다 나중에 만들어진 경우에만 쓴다 (옛 결과 사용 방지)
-        if mail.exists() and (src is None or mail.stat().st_mtime >= rank.stat().st_mtime):
-            src = mail
-        elif mail.exists():
-            print("  ! mailing_list.xlsx가 audit_hours_rank.csv보다 오래됨 → 순위 파일 사용 "
-                  "(주소·대표자는 contacts_cache.csv에서. 필요하면 dart_contacts.py 다시 실행)")
-    if src is None or not src.exists():
-        sys.exit("[오류] mailing_list.xlsx / audit_hours_rank.csv 가 없습니다. 전체 파싱이 끝났는지 확인하세요.")
+        # mailing_list.xlsx는 이 스크립트가 만드는 결과물(--write-mailing)이라 입력으로 쓰지 않는다
+        src = BASE / "audit_hours_rank.csv"
+    if not src.exists():
+        sys.exit(f"[오류] {src.name} 이(가) 없습니다. 전체 파싱이 끝났는지 확인하세요.")
     df = read_table(src)
     print(f"[입력] {src.name}: {len(df):,}행, 수정 {time.strftime('%Y-%m-%d %H:%M', time.localtime(src.stat().st_mtime))}")
     if src.name == "audit_hours_rank.csv" and len(df) < 3000:
@@ -1023,9 +1020,72 @@ def write_outputs(df, cfg):
     print(top[["순위", "회사명", "신호점수", "신호요약"]].head(15).to_string(index=False))
 
 
+TRACK_COLS = ["발송일", "통화일", "통화상대", "통화결과", "다음연락일", "비고"]
+
+
+def write_mailing(df, cfg):
+    """상위 N곳을 우편 발송·전화 후속용 명단으로 저장한다 (Word 편지 병합의 데이터 원본)"""
+    top = df[~df["제외"]].head(cfg["top_n"])
+    c = read_table(CONTACTS_FILE) if CONTACTS_FILE.exists() else pd.DataFrame(columns=["corp_code"])
+    c["corp_code"] = c["corp_code"].astype(str).str.zfill(8)
+    c = c.drop_duplicates("corp_code").set_index("corp_code")
+    get = lambda col: top["corp_code"].map(c[col]) if col in c else np.nan
+
+    cover = top["대표이사_원문"] if "대표이사_원문" in top else pd.Series(np.nan, index=top.index)
+    cover = cover.astype(object).where(cover.fillna("").ne("")).str.replace(",", ", ")
+    std = top["최소표준감사시간"]
+    m = pd.DataFrame({
+        "순위": top["순위"], "회사명": top["회사명"],
+        "대표자": cover.fillna(top["대표자"]),            # 원문 표지 우선 (기업개황은 오래된 경우가 많다)
+        "주소": top["주소"], "전화": get("전화"), "팩스": get("팩스"), "홈페이지": get("홈페이지"),
+        "현감사인": top["감사인"], "감사인구분": top["감사인구분"],
+        "자산(억)": top["자산_억"], "매출(억)": top["매출_억"],
+        "감사시간": top["감사시간"], "예측대비배수": top["예측대비배수"],
+        "표준업종": top.get("표준업종"), "최소표준시간": std, "초도감사반영시간": (std * 1.10).round(),
+        "표준시간대비": top.get("표준시간대비"), "표준시간비고": top.get("표준시간비고"),
+        "신호점수": top["신호점수"], "신호요약": top["신호요약"],
+        "대표이사변경": top.get("대표이사변경"), "대표자_기업개황": top["대표자"],
+        "접수번호": top["접수번호"], "corp_code": top["corp_code"],
+    })
+    for col in TRACK_COLS:
+        m[col] = ""
+
+    if OUT_MAIL.exists():
+        # 이전 명단은 지우지 않고 따로 남기고, 적어 둔 발송·통화 기록은 같은 접수번호로 옮긴다
+        bak = OUT_MAIL.with_name(f"mailing_list_backup_{time.strftime('%Y%m%d_%H%M')}.xlsx")
+        shutil.copy2(OUT_MAIL, bak)
+        print(f"[명단] 이전 {OUT_MAIL.name} → {bak.name} 로 보관")
+        old = read_table(OUT_MAIL)
+        if "접수번호" in old:
+            old = old.drop_duplicates("접수번호").set_index("접수번호")
+            for col in TRACK_COLS:
+                if col in old and old[col].notna().any():
+                    m[col] = m["접수번호"].map(old[col]).fillna("")
+
+    def write_xlsx(p):
+        with pd.ExcelWriter(p, engine="openpyxl") as xw:
+            m.to_excel(xw, sheet_name="발송명단", index=False)
+            pd.DataFrame({"주의": [
+                "서면(커버레터)에 현 감사인 비교, 감사시간 과다, 보수 절감액을 쓰지 말 것. 감사시간·배수·표준시간은 내부 타깃팅과 통화·미팅 준비용.",
+                "대표자는 감사보고서 원문 표지 기준(없으면 기업개황). 발송 전 확인할 것.",
+                "최소표준시간은 2026 적용률 기준. 자산 200억 미만은 적용 면제라 빈칸. '매출 미확인'은 하한값.",
+                "우편번호는 DART에 없음.",
+            ]}).to_excel(xw, sheet_name="주의", index=False)
+            ws = xw.sheets["발송명단"]
+            ws.freeze_panes = "C2"
+            for col in ws.columns:
+                width = max(len(str(v.value)) if v.value is not None else 0 for v in col[:50])
+                ws.column_dimensions[col[0].column_letter].width = min(max(8, width * 1.6), 50)
+
+    out = safe_write(write_xlsx, OUT_MAIL)
+    print(f"[명단] {Path(out).name}: {len(m)}곳 (주소 없음 {int(m['주소'].isna().sum())}, 전화 없음 {int(m['전화'].isna().sum())})")
+
+
 def main():
     ap = argparse.ArgumentParser(description="감사인 교체 가능성 신호 점수")
-    ap.add_argument("--input", help="기본: mailing_list.xlsx, 없으면 audit_hours_rank.csv")
+    ap.add_argument("--write-mailing", action="store_true",
+                    help="상위 N곳을 mailing_list.xlsx(우편 발송·전화 후속 명단)로 저장")
+    ap.add_argument("--input", help="기본: audit_hours_rank.csv")
     ap.add_argument("--period", help="대상 결산기 (기본 2025.12)")
     ap.add_argument("--top", type=int, help="상위 N곳 (기본 150)")
     ap.add_argument("--fetch-history", action="store_true", help="2024·2025 접수 목록 수집 후 종료")
@@ -1079,6 +1139,8 @@ def main():
         print("[2단계] 기존 판독 캐시 반영")
 
     write_outputs(df, cfg)
+    if a.write_mailing:
+        write_mailing(df, cfg)
 
 
 if __name__ == "__main__":

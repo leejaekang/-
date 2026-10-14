@@ -16,7 +16,7 @@ claude.ai 대화에서 진행하던 작업을 Claude Code로 이어서 한다.
 ## 작업 환경
 
 - Windows, PowerShell, Python 3.14 (`python`, pip는 `python -m pip`)
-- 필요 패키지: `requests beautifulsoup4 lxml pandas numpy openpyxl`
+- 필요 패키지: `requests beautifulsoup4 lxml pandas numpy openpyxl python-docx`
 - OpenDART API 키는 환경변수 `DART_API_KEY`로만 쓴다. **파일이나 코드에 키를 적지 않는다.**
 - OpenDART 하루 호출 한도 약 2만 건. 한도 초과 응답은 status 020, 원문 없음은 014.
 - 결과 CSV를 엑셀로 열어 두면 덮어쓰기가 실패한다. 실행 전 엑셀을 닫도록 안내한다.
@@ -31,7 +31,8 @@ claude.ai 대화에서 진행하던 작업을 Claude Code로 이어서 한다.
 | `dart_download_only.py` | 원문 zip만 `dart_cache/`에 받는다 (파싱 없음, 이미 받은 건 즉시 건너뜀) |
 | `dart_contacts.py` | 순위 결과에 기업개황(대표자·주소·전화·업종)과 최소 표준감사시간을 붙여 `mailing_list.xlsx` 생성 |
 | `dart_diag.py` | 원문 표 구조 진단용 (감사시간 추출 실패 시) |
-| `dart_signals.py` | 교체 가능성 신호 점수 → `signals_top.xlsx` (아래 "다음 할 일 1") |
+| `dart_signals.py` | 교체 가능성 신호 점수 → `signals_top.xlsx`, `--write-mailing`으로 `mailing_list.xlsx` (아래 "다음 할 일 1") |
+| `build_mail.py` | `mailing_list.xlsx` → `커버레터_전체.docx`(회사별 1장) + `주소라벨.docx`(A4 2열×7행). 문안·라벨 규격은 스크립트 상단 |
 | `filings.csv` | 2026.1.1~6.30 접수 비상장(E) 감사보고서(F001) 공시 목록 42,628건. **지우지 말 것** |
 | `filings_hist/` | `dart_signals.py --fetch-history`가 받는 2024·2025 접수분 월별 목록 |
 | `dart_cache/` | 원문 zip 캐시 (`{rcept_no}.zip`). 약 37,700개. **지우지 말 것** |
@@ -61,6 +62,8 @@ python dart_contacts.py            # 상위만: --top 150, 단가 넣으면: --r
 python dart_signals.py --fetch-history          # 최초 1회: 2024·2025 목록 수집 (API 약 1,000건)
 python dart_signals.py                          # 1단계 점수 (첫 실행은 외국계·대기업 계열 판독으로 약 5분)
 python dart_signals.py --fetch-contacts --stage2 --stage2-n 400  # 상위권 주소 받기 + 2단계: 상위 400곳 원문 확인
+python dart_signals.py --write-mailing          # 상위 150곳 → mailing_list.xlsx (이전 파일은 mailing_list_backup_*.xlsx로 보관, 발송·통화 기록은 옮겨 줌)
+python build_mail.py --date "2026년 11월 16일"  # 커버레터·주소 라벨 Word 파일
 ```
 
 500건 테스트 결과(2026.10.13): 감사시간 500/500, 자산 480/500, 매출 476/500,
@@ -86,7 +89,11 @@ K-IFRS 90건 제외 → 410건 → 자산 1,500억 이하 365건. 회귀계수 �
   매출 인식을 개선하려면 `parse_fin`의 매출 라벨을 넓히고 `--fresh`로 전체 재파싱(약 3.5시간)해야 한다.
 - **기업개황의 대표자는 오래된 경우가 많다** (비상장사는 DART 기업개황을 잘 안 고친다). 원문 표지의 대표이사와 다르면 원문이 최신.
   우편 수신인은 `signals_top.xlsx`의 `대표이사_원문`을 우선 쓴다.
-- **남은 것**: 상위 150곳 검토 → `exclude_clients.csv`(기장 거래처) 반영 → 커버레터·주소 라벨
+- `mailing_list.xlsx`는 이제 `dart_signals.py --write-mailing`이 만든다 (신호 점수 상위 150곳, 10.14 생성).
+  `dart_contacts.py`는 예측대비배수 순으로만 자르는 옛 방식이라 발송 명단용으로는 쓰지 않는다. `dart_signals.py`는 `mailing_list.xlsx`를 입력으로 읽지 않는다.
+- 커버레터·주소 라벨 초안 생성 (`build_mail.py`, 10.14). 서명은 '공인회계사 이재강' 명의 초안, QR은 없음 (연결할 URL 미정).
+  라벨 규격(2열×7행, 99.1×38.1mm)은 실제 라벨지와 대조 전 → 일반 용지에 시험 인쇄 필요.
+- **남은 것**: 상위 150곳 검토 → `exclude_clients.csv`(기장 거래처) 반영 후 `--write-mailing`·`build_mail.py` 다시 → 문안 확정 → 11월 중순 발송
 
 ## 다음 할 일
 

@@ -6,10 +6,12 @@ contacts_cache.csv
 audit_hours_rank.csv
 parse_failed.csv
 parse_progress.jsonl
-mailing_list.xlsx
+mailing_list*.xlsx
 signals_*.csv
 signals_top*.xlsx
 exclude_clients.csv
 __pycache__/
 *.part
 ~$*
+커버레터*.docx
+주소라벨*.docx
