@@ -359,7 +359,10 @@ def fetch_contacts(df, cfg, n):
     if cand.empty:
         return False
     cut = cand["신호점수"].iloc[min(n, len(cand)) - 1]
-    reach = cand[cand["신호점수"] - cand["p_근접"] >= cut - max(p for _, p in cfg["proximity"])]
+    # 주소(근접 가점)와 업종코드(표준시간 가점, 자산 200억 이상만)를 받으면 더 얻을 수 있는 점수
+    gain = max(p for _, p in cfg["proximity"]) + np.where(
+        cand["자산_억"] >= cfg["std_exempt_eok"], cfg["weights"]["std_hours"], 0)
+    reach = cand[cand["신호점수"] - cand["p_근접"] - cand["p_표준시간"] + gain >= cut]
     cache = read_table(CONTACTS_FILE) if CONTACTS_FILE.exists() else pd.DataFrame(columns=["corp_code"])
     cache["corp_code"] = cache["corp_code"].astype(str).str.zfill(8)
     done = set(cache["corp_code"])
@@ -529,8 +532,42 @@ def load_base(cfg, filings, input_path=None):
                 src_col = find_col(c, key, cfg)
                 if src_col and out[col].isna().all():
                     out[col] = out["corp_code"].map(c[src_col])
-            print("[보강] contacts_cache.csv 에서 주소·대표자")
+            if "업종코드" in c:
+                out["업종코드"] = out["corp_code"].map(c["업종코드"])
+            print("[보강] contacts_cache.csv 에서 주소·대표자·업종코드")
+    out = add_std_hours(out, cfg)
     return out.dropna(subset=["corp_code"]).drop_duplicates("corp_code")
+
+
+def add_std_hours(out, cfg):
+    """입력에 최소 표준감사시간이 없으면 업종코드·자산·매출로 계산한다 (표와 적용률은 dart_contacts.py)"""
+    if out["최소표준감사시간"].notna().any() or "업종코드" not in out:
+        return out
+    try:
+        import dart_contacts as dc
+    except ImportError:
+        print("  ! dart_contacts.py가 없어 최소 표준감사시간을 계산하지 못함")
+        return out
+    std, inds, notes = [], [], []
+    for assets, sales, code in zip(out["자산_억"], out["매출_억"], out["업종코드"]):
+        ind = dc.std_industry(code)
+        inds.append(ind)
+        if pd.isna(assets) or ind is None or assets < cfg["std_exempt_eok"]:    # 자산 200억 미만은 적용 면제
+            std.append(np.nan)
+            notes.append("자산 200억 미만: 적용 면제" if ind is not None and not pd.isna(assets) else "")
+            continue
+        g = dc.std_group(assets)
+        base, _ = dc.table_hours(g, ind, (assets + (0 if pd.isna(sales) else sales)) / 2)
+        std.append(round(base * dc.APPLY_RATE_2026[g]))
+        # 매출을 못 읽었으면 0으로 계산한 하한값이다 (실제 매출이 있으면 표준시간은 더 크다)
+        notes.append("매출 미확인: 매출 0으로 계산한 하한" if pd.isna(sales) else "")
+    out["최소표준감사시간"] = std
+    out["표준업종"] = inds
+    out["표준시간비고"] = notes
+    out["표준시간대비"] = (out["감사시간"] / out["최소표준감사시간"]).round(2)
+    print(f"[표준시간] 최소 표준감사시간 계산 {int(out['최소표준감사시간'].notna().sum()):,}사 "
+          f"(업종코드 있는 {int(out['업종코드'].notna().sum()):,}사 중 자산 {cfg['std_exempt_eok']}억 이상)")
+    return out
 
 
 # ----------------------------------------------------------------------------
@@ -580,7 +617,9 @@ def add_stage1(df, filings, cfg):
     mult = df["예측대비배수"]
     pts["p_배수"] = (w["multiple"] * ((mult - 1) / (cfg["multiple_full"] - 1)).clip(0, 1)).fillna(0)
 
-    std_ok = (df["자산_억"] >= cfg["std_exempt_eok"]) & df["최소표준감사시간"].gt(0) & df["감사시간"].gt(0)
+    # 매출을 못 읽은 회사는 표준시간이 하한값이라 가점을 주지 않는다
+    std_ok = ((df["자산_억"] >= cfg["std_exempt_eok"]) & df["최소표준감사시간"].gt(0) & df["감사시간"].gt(0)
+              & df["매출_억"].notna())
     ratio = df["감사시간"] / df["최소표준감사시간"]
     pts["p_표준시간"] = np.where(
         std_ok, w["std_hours"] * ((ratio - 1) / (cfg["std_full_ratio"] - 1)).clip(0, 1), 0)
@@ -937,7 +976,7 @@ def finalize(df, cfg):
 
 
 TOP_COLS = ["순위", "회사명", "corp_code", "신호점수", "신호요약", "자산_억", "매출_억", "감사시간", "예측대비배수",
-            "감사시간증가율%", "최소표준감사시간", "감사인", "감사인구분", "감사인_전년", "감사인_전전년",
+            "감사시간증가율%", "표준업종", "최소표준감사시간", "표준시간대비", "표준시간비고", "감사인", "감사인구분", "감사인_전년", "감사인_전전년",
             "감사인교체횟수", "기재정정", "제출일", "제출일_전년", "제출지연일", "근접지역", "주소", "대표자",
             "대표이사_원문", "대표이사_전년원문", "대표이사변경", "감사의견", "계속기업불확실성", "접수번호"]
 

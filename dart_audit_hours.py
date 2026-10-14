@@ -293,19 +293,24 @@ def rank(df, max_assets=None):
         print(f"\n[주의] 감사시간·자산이 모두 추출된 건이 {len(ok)}건뿐이라 순위를 계산하지 않습니다. parse_failed.csv를 확인하세요.")
         return None
     ok = ok[(ok["hours"] > 0) & (ok["assets_eok"] > 0)]
-    ok["revenue_eok"] = ok["revenue_eok"].fillna(0).clip(lower=0)
+    ok["revenue_eok"] = ok["revenue_eok"].clip(lower=0)
     # log(감사시간) = a + b*log(자산) + c*log(매출+1) 회귀 → 잔차가 클수록 규모 대비 시간 과다
-    X = np.column_stack([np.ones(len(ok)),
-                         np.log(ok["assets_eok"]),
-                         np.log1p(ok["revenue_eok"])])
-    y = np.log(ok["hours"])
-    coef, *_ = np.linalg.lstsq(X, y, rcond=None)
-    ok["예측시간"] = np.exp(X @ coef).round(0)
+    # 매출을 못 읽은 회사를 매출 0으로 넣으면 예측시간이 낮아져 배수가 부풀려진다.
+    # → 매출이 있는 회사만으로 적합하고, 매출 없는 회사는 자산만 쓴 회귀로 예측한다.
+    has_rev = ok["revenue_eok"].notna().to_numpy()
+    y = np.log(ok["hours"]).to_numpy()
+    la = np.log(ok["assets_eok"]).to_numpy()
+    X = np.column_stack([np.ones(len(ok)), la, np.log1p(ok["revenue_eok"].fillna(0))])
+    coef, *_ = np.linalg.lstsq(X[has_rev], y[has_rev], rcond=None)
+    coef_a, *_ = np.linalg.lstsq(X[:, :2], y, rcond=None)
+    pred = np.where(has_rev, X @ coef, X[:, :2] @ coef_a)
+    print(f"매출 미확인 {int((~has_rev).sum())}건은 자산만으로 예측 (상수 {coef_a[0]:.3f}, log자산 {coef_a[1]:.3f})")
+    ok["예측시간"] = np.exp(pred).round(0)
     ok["예측대비배수"] = (ok["hours"] / ok["예측시간"]).round(2)
     ok["시간_per_자산억"] = (ok["hours"] / ok["assets_eok"]).round(2)
     ok["시간_per_매출억"] = (ok["hours"] / ok["revenue_eok"].replace(0, np.nan)).round(2)
     ok["전기대비증가율"] = ((ok["hours"] / ok["hours_prev"]) - 1).round(3)
-    print(f"\n회귀계수: 상수 {coef[0]:.3f}, log자산 {coef[1]:.3f}, log매출 {coef[2]:.3f} (n={len(ok)})")
+    print(f"\n회귀계수: 상수 {coef[0]:.3f}, log자산 {coef[1]:.3f}, log매출 {coef[2]:.3f} (n={int(has_rev.sum())})")
     return ok.sort_values("예측대비배수", ascending=False)
 
 
