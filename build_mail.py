@@ -58,14 +58,15 @@ FIRM_POINTS = [
 ]
 CLOSING = [
     "안내문이 잘 전달되었는지 확인하기 위해 담당자가 한 차례 전화드릴 수 있습니다. "
-    "안내를 원하지 않으시면 위 연락처로 알려 주십시오. 이후 연락드리지 않겠습니다.",
+    "안내를 원하지 않으시면 뒷장 회신서의 QR코드로 '앞으로 안내를 원하지 않음'을 선택해 주십시오. "
+    "이후 연락드리지 않겠습니다.",
     "감사합니다.",
 ]
 CONTACT = [
     "지인회계법인",
     "서울특별시 강남구 테헤란로103길 6, 5층 (삼성동)",
-    "대표전화 070-8765-1910",
-    "담당 이재강 공인회계사 · 010-6624-2061 · ljkdlworkd@gmail.com",
+    "담당 이재강 공인회계사 (직통) 010-6624-2061",
+    "이메일 ljkdlworkd@gmail.com",
 ]
 SIGNATURE = "지인회계법인  대표이사  송 재 철"
 
@@ -240,8 +241,8 @@ def build_reply(doc, row):
     para(doc, "보내실 곳", size=10.5, bold=True, before=10, after=2)
     if REPLY_FAX:
         para(doc, f"  팩스  {REPLY_FAX}", size=11)
-    para(doc, f"  문자(사진)  {REPLY_MOBILE}  ·  이메일  {REPLY_EMAIL}", size=11)
-    para(doc, f"  지인회계법인 담당 이재강 공인회계사 · 대표전화 070-8765-1910", size=10)
+    para(doc, f"  전화·문자(사진)  {REPLY_MOBILE}  ·  이메일  {REPLY_EMAIL}", size=11)
+    para(doc, "  지인회계법인 담당 이재강 공인회계사", size=10)
     para(doc, "적어 주신 담당자 정보는 회신 응대와 상담 연락에만 사용하며, 상담이 끝나면 파기합니다. "
               "'앞으로 안내를 원하지 않음'에 표시하시면 이후 연락드리지 않습니다.", size=8.5, before=8)
 
@@ -333,6 +334,8 @@ def main():
         sys.exit(f"[오류] {MAIL.name} 이(가) 없습니다. 먼저 python dart_signals.py --write-mailing")
     m = pd.read_excel(MAIL, sheet_name="발송명단", dtype=str)
     m = m[m["회사명"].notna()]
+    # 커버레터·회신서와 주소 라벨을 같은 순서(회사명 가나다순)로 인쇄해 봉투 작업 때 맞춰 넣기 쉽게 한다
+    m = m.sort_values("회사명", key=lambda s: s.str.replace(r"\s|\(주\)|주식회사", "", regex=True)).reset_index(drop=True)
     no_addr = m["주소"].isna().sum()
     if no_addr:
         print(f"  ! 주소 없는 {no_addr}곳은 라벨에 회사명만 들어갑니다")
