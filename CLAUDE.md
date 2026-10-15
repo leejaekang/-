@@ -16,7 +16,7 @@ claude.ai 대화에서 진행하던 작업을 Claude Code로 이어서 한다.
 ## 작업 환경
 
 - Windows, PowerShell, Python 3.14 (`python`, pip는 `python -m pip`)
-- 필요 패키지: `requests beautifulsoup4 lxml pandas numpy openpyxl python-docx`
+- 필요 패키지: `requests beautifulsoup4 lxml pandas numpy openpyxl python-docx qrcode[pil]`
 - OpenDART API 키는 환경변수 `DART_API_KEY`로만 쓴다. **파일이나 코드에 키를 적지 않는다.**
 - OpenDART 하루 호출 한도 약 2만 건. 한도 초과 응답은 status 020, 원문 없음은 014.
 - 결과 CSV를 엑셀로 열어 두면 덮어쓰기가 실패한다. 실행 전 엑셀을 닫도록 안내한다.
@@ -33,6 +33,8 @@ claude.ai 대화에서 진행하던 작업을 Claude Code로 이어서 한다.
 | `dart_diag.py` | 원문 표 구조 진단용 (감사시간 추출 실패 시) |
 | `dart_signals.py` | 교체 가능성 신호 점수 → `signals_top.xlsx`, `--write-mailing`으로 `mailing_list.xlsx` (아래 "다음 할 일 1") |
 | `build_mail.py` | `mailing_list.xlsx` → `커버레터_전체.docx`(회사별 1장) + `주소라벨.docx`(A4 2열×7행). 문안·라벨 규격은 스크립트 상단 |
+| `add_zipcode.py` | 발송명단 주소 → 우편번호 (도로명주소 검색 API, 환경변수 `JUSO_API_KEY`). 결과는 `zipcode_cache.csv`, `build_mail.py`가 라벨에 "(우) 06134"로 넣는다 |
+| `brochure/insert.html` | 커버레터 동봉자료(A4 양면 1장) 원본. 앞면 2027 외부감사 준비 일정표(법정 기한·근거 조문), 뒷면 법인 소개(세무·자문 4종, 감사 진행, FAQ, 담당 이재강·김관우). `powershell -ExecutionPolicy Bypass -File brochure\build_insert.ps1` → `동봉자료_외부감사준비안내.pdf` |
 | `filings.csv` | 2026.1.1~6.30 접수 비상장(E) 감사보고서(F001) 공시 목록 42,628건. **지우지 말 것** |
 | `filings_hist/` | `dart_signals.py --fetch-history`가 받는 2024·2025 접수분 월별 목록 |
 | `dart_cache/` | 원문 zip 캐시 (`{rcept_no}.zip`). 약 37,700개. **지우지 말 것** |
@@ -63,7 +65,8 @@ python dart_signals.py --fetch-history          # 최초 1회: 2024·2025 목록
 python dart_signals.py                          # 1단계 점수 (첫 실행은 외국계·대기업 계열 판독으로 약 5분)
 python dart_signals.py --fetch-contacts --stage2 --stage2-n 400  # 상위권 주소 받기 + 2단계: 상위 400곳 원문 확인
 python dart_signals.py --write-mailing          # 상위 150곳 → mailing_list.xlsx (이전 파일은 mailing_list_backup_*.xlsx로 보관, 발송·통화 기록은 옮겨 줌)
-python build_mail.py --date "2026년 11월 16일"  # 커버레터·주소 라벨 Word 파일
+python add_zipcode.py                           # 우편번호 (캐시에 없는 주소만)
+python build_mail.py --date "2026년 11월 16일"  # 커버레터·회신서·주소 라벨 Word 파일
 ```
 
 500건 테스트 결과(2026.10.13): 감사시간 500/500, 자산 480/500, 매출 476/500,
@@ -93,6 +96,20 @@ K-IFRS 90건 제외 → 410건 → 자산 1,500억 이하 365건. 회귀계수 �
   `dart_contacts.py`는 예측대비배수 순으로만 자르는 옛 방식이라 발송 명단용으로는 쓰지 않는다. `dart_signals.py`는 `mailing_list.xlsx`를 입력으로 읽지 않는다.
 - 커버레터·주소 라벨 초안 생성 (`build_mail.py`, 10.14). 서명은 '대표이사 송재철' 명의(연락처의 담당자는 이재강 회계사), QR은 없음 (연결할 URL 미정).
   라벨 규격(2열×7행, 99.1×38.1mm)은 실제 라벨지와 대조 전 → 일반 용지에 시험 인쇄 필요.
+- 동봉자료 확정 (10.15): `동봉자료_외부감사준비안내.pdf`. 약속 문구(견적 무료, 선임 보고 서류 안내, 전기 감사인 협의, 중간감사, 개선권고서)와 세무 서비스 4종은 사용자 확인 완료.
+  '무료 진단'(세액공제 누락·세무 현안 1회)은 "감사인 선임 여부와 관계없이"로 감사 수임과 분리해 둔 것. 감사 계약 조건으로 엮지 말 것 (보수 할인·부당 유인 소지).
+  작년 제안서(바탕화면 지인회계법인\회사소개서...선산토건...pptx)에서 대현회계법인 분할 설립, No Surprise 원칙, 데이터 분석(벤포드) 점검, 품질관리 독립 검토, 고객사 목록을 가져옴.
+  고객사 칩은 제안서 41곳 중 filings.csv에서 flr_nm=지인회계법인으로 확인된 37곳 안에서 12곳만 골랐다. 제안서의 '금감원 감리 대상 아님' 문구와 보수는 일부러 뺐다.
+  세무 칸 아래 공인회계사법 제21조 안내 문구는 유지할 것 (감사 대상 회사에 금지 업무가 있음. 지분 매매 목적 가치평가·실사 등). 업종 분포: 상위 150곳 중 부동산업 26, 도소매 26, 제조 26, IT·소프트웨어 24, 건설 13
+- 회신서·봉투 문구 추가 (10.15, `build_mail.py`): `커버레터_전체.docx`가 회사마다 [커버레터, 회신서] 2쪽(300쪽). 회신서에 회사명·회신번호(=corp_code)·QR 미리 인쇄,
+  체크 항목(견적 요청/무료 진단/방문 상담/자료만/수신 거부). QR은 `REPLY_URL`이 비어 있으면 회신번호가 제목에 든 mailto. 10.15 구글 설문 연결 완료 (회신번호 entry.1830759413, 회사명 entry.1697068679 미리 채움, 응답은 사용자 구글 시트).
+  `REPLY_FAX`가 비어 있으면 팩스 안내 줄을 넣지 않는다 (법인 팩스번호 미확인). 주소 라벨 맨 위에 `LABEL_NOTICE`(선임기한 안내) 한 줄. 커버레터의 '지인회계법인 소개' 칸은 동봉자료와 겹쳐 뺐다.
+- **주소도 기업개황이 오래됐다** (10.15 점검: 상위 150곳 중 53곳이 이사). `dart_signals.py`가 2단계 원문 표지의 '본점 소재지'를 읽어 `주소_원문`에 넣고,
+  근접 가점과 `mailing_list.xlsx`의 `주소`는 원문 주소 우선(없으면 기업개황, `주소_기업개황` 컬럼에 남김). 이 반영으로 근접지역 밖으로 이사한 9곳이 빠지고 9곳이 들어왔다.
+  2단계 판독 범위(상위 약 500곳) 밖의 회사는 여전히 기업개황 주소로 근접 가점을 받는다.
+- 우편번호: `add_zipcode.py`로 148개 주소 중 147개 (부산 기장 연화리 24 엔터세븐은 도로명주소 DB에 없음 → 확인 필요). 승인키는 개발키(90일, 2027.1 중순 만료)
+- **발송 일정 변경 (10.15 결정)**: 11월 중순 → **2026.10.16 발송** (커버레터 날짜 10.16). 전화 후속은 10.23~10.27경.
+  기장 거래처 전체 목록은 구할 수 없어 대조 없이 보냄 → **회신·통화로 반응한 회사는 계약 전에 기장·세무 거래 여부를 반드시 확인** (독립성).
 - **남은 것**: 상위 150곳 검토 → `exclude_clients.csv`(기장 거래처) 반영 후 `--write-mailing`·`build_mail.py` 다시 → 문안 확정 → 11월 중순 발송
 
 ## 다음 할 일

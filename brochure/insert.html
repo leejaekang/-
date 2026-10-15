@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>외부감사 준비 안내</title>
+<!--
+  커버레터 동봉용 A4 양면 1장. 앞면: 2027 사업연도 외부감사 준비 일정표 / 뒷면: 지인회계법인 소개
+  PDF 만들기: powershell -File brochure\build_insert.ps1
+  영업 원칙: 다른 감사인과의 비교, 감사시간·보수 언급, 최상급 표현 금지.
+  법령 기준: 외감법 제10·12·23조, 시행령 제8·18·27조 (2026.10.15 현행 확인)
+  노란 표시(.fill)는 채워 넣을 자리
+-->
+<style>
+@page { size: 210mm 297mm; margin: 0; }
+:root {
+  --ink: #1d232b; --sub: #4a5563; --mute: #7b8592; --line: #d5dae1;
+  --navy: #1f3a5f; --navy-soft: #e9eef5; --accent: #b4542a; --fill: #fff3a8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #fff; }
+body { font-family: "Malgun Gothic", "맑은 고딕", sans-serif; color: var(--ink); font-size: 9.6pt; line-height: 1.5;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact; word-break: keep-all; }
+.page { width: 210mm; height: 297mm; padding: 13mm 14mm 11mm; position: relative; overflow: hidden; page-break-after: always;
+  display: flex; flex-direction: column; }
+.page:last-child { page-break-after: auto; }
+.fill { background: var(--fill); padding: 0 2px; }
+
+/* 머리 */
+.kicker { font-size: 8.5pt; color: var(--accent); font-weight: 700; letter-spacing: .02em; }
+h1 { font-size: 20pt; line-height: 1.25; color: var(--navy); margin-top: 1.5mm; letter-spacing: -.01em; }
+.lead { color: var(--sub); margin-top: 1.5mm; font-size: 9.4pt; }
+h2 { font-size: 11.5pt; color: var(--navy); margin: 5mm 0 2mm; display: flex; align-items: center; gap: 2mm; }
+h2 .no { display: inline-flex; width: 5.6mm; height: 5.6mm; border-radius: 50%; background: var(--navy); color: #fff;
+  font-size: 8.5pt; align-items: center; justify-content: center; }
+
+/* 핵심 기한 */
+.keys { display: grid; grid-template-columns: 1.15fr 1fr 1fr; gap: 3mm; margin-top: 5mm; }
+.key { border: 1px solid var(--line); border-radius: 2mm; padding: 3mm 3.5mm; }
+.key.main { background: var(--navy); border-color: var(--navy); color: #fff; }
+.key .t { font-size: 8.3pt; color: var(--sub); }
+.key.main .t { color: #c9d5e6; }
+.key .d { font-size: 16pt; font-weight: 700; line-height: 1.25; margin: .8mm 0; color: var(--navy); }
+.key.main .d { color: #fff; }
+.key .s { font-size: 8pt; color: var(--mute); line-height: 1.4; }
+.key.main .s { color: #c9d5e6; }
+
+/* 일정표 */
+table.tl { width: 100%; border-collapse: collapse; font-size: 8.9pt; }
+table.tl th { background: var(--navy-soft); color: var(--navy); font-weight: 700; text-align: left; padding: 1.6mm 2mm;
+  border-top: 1.5px solid var(--navy); border-bottom: 1px solid var(--line); font-size: 8.4pt; }
+table.tl td { padding: 1.8mm 2mm; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.tl td.st { font-weight: 700; white-space: nowrap; }
+table.tl td.st small { display: block; font-weight: 400; color: var(--mute); font-size: 7.6pt; }
+table.tl td.when { white-space: nowrap; color: var(--navy); font-weight: 700; }
+table.tl td.law { color: var(--mute); font-size: 7.6pt; white-space: nowrap; }
+table.tl tr.hl td { background: #fbf4ef; }
+.phase { font-size: 7.6pt; color: var(--accent); font-weight: 700; }
+
+/* 체크리스트 */
+.check { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2mm 6mm; }
+.check li { list-style: none; padding-left: 5.5mm; position: relative; font-size: 8.9pt; }
+.check li::before { content: ""; position: absolute; left: 0; top: 1.1mm; width: 3mm; height: 3mm; border: 1.2px solid var(--navy); border-radius: .6mm; }
+.check li b { color: var(--ink); }
+.check li span { color: var(--sub); }
+
+.note { margin-top: auto; padding-top: 3mm; border-top: 1px solid var(--line); font-size: 7.5pt; color: var(--mute); line-height: 1.5;
+  display: flex; justify-content: space-between; gap: 6mm; }
+.note .firm { white-space: nowrap; text-align: right; color: var(--sub); }
+.note .firm b { color: var(--navy); }
+
+/* 뒷면 */
+.hero { background: var(--navy); color: #fff; margin: -13mm -14mm 0; padding: 12mm 14mm 6.5mm; }
+.back h2 { margin: 4.2mm 0 1.8mm; }
+.back .contact { margin-top: auto; }
+.back .people { margin-bottom: 4mm; }
+.hero .kicker { color: #f0b48f; }
+.hero h1 { color: #fff; }
+.hero .lead { color: #d5deea; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; margin-top: 4.5mm; }
+.stat { border-left: 2px solid #f0b48f; padding-left: 3mm; }
+.stat .n { font-size: 19pt; font-weight: 700; line-height: 1.1; }
+.stat .n small { font-size: 9pt; font-weight: 400; margin-left: .5mm; }
+.stat .l { font-size: 8pt; color: #c9d5e6; margin-top: .6mm; }
+
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; }
+.step { border: 1px solid var(--line); border-radius: 2mm; padding: 3mm; }
+.step .k { font-size: 7.8pt; color: var(--accent); font-weight: 700; }
+.step .h { font-size: 9.8pt; font-weight: 700; color: var(--navy); margin: .6mm 0 1mm; }
+.step p { font-size: 8.4pt; color: var(--sub); line-height: 1.45; }
+
+.faq { display: grid; gap: 2.2mm; }
+.qa { display: grid; grid-template-columns: 7mm 1fr; gap: 0 1mm; }
+.qa .q, .qa .a { font-weight: 700; font-size: 10pt; }
+.qa .q { color: var(--navy); }
+.qa .a { color: var(--accent); }
+.qa .qt { font-weight: 700; }
+.qa .at { color: var(--sub); font-size: 8.9pt; }
+
+.people { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+.person { background: var(--navy-soft); border-radius: 2mm; padding: 3mm 3.5mm; }
+.person .r { font-size: 8pt; color: var(--sub); }
+.person .nm { font-size: 11pt; font-weight: 700; color: var(--navy); margin: .3mm 0 1mm; }
+.team-lead { font-size: 8.9pt; color: var(--sub); margin-bottom: 2.2mm; }
+.team-lead b { color: var(--navy); }
+.inds { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; }
+.inds.tax .step { background: var(--navy-soft); border-color: var(--navy-soft); }
+.free { display: flex; align-items: center; gap: 3mm; margin-top: 2.2mm; padding: 2.2mm 3.5mm; border: 1.3px solid var(--accent); border-radius: 2mm; font-size: 9pt; }
+.free .badge { background: var(--accent); color: #fff; font-weight: 700; font-size: 8.5pt; padding: .8mm 2.5mm; border-radius: 1mm; white-space: nowrap; }
+.free b { color: var(--accent); }
+.chips { display: flex; flex-wrap: wrap; gap: 1.6mm; }
+.chip { border: 1px solid var(--line); border-radius: 1mm; padding: .7mm 2.4mm; font-size: 8.6pt; color: var(--navy); font-weight: 700; }
+.h2s { font-size: 7.6pt; color: var(--mute); font-weight: 400; margin-left: 1mm; }
+.fine { font-size: 7.4pt; color: var(--mute); margin-top: 1.5mm; line-height: 1.45; }
+.person ul { padding-left: 4mm; font-size: 8.5pt; color: var(--sub); }
+
+.contact { margin-top: auto; border-top: 1.5px solid var(--navy); padding-top: 3.5mm; display: grid; grid-template-columns: 1fr auto; gap: 4mm; align-items: end; }
+.contact .nm { font-size: 13pt; font-weight: 700; color: var(--navy); }
+.contact .ad { font-size: 8.6pt; color: var(--sub); margin-top: .5mm; }
+.contact .tel { text-align: right; font-size: 8.8pt; line-height: 1.6; }
+.contact .tel b { color: var(--navy); font-size: 11pt; }
+</style>
+</head>
+<body>
+
+<!-- ========================= 앞면 ========================= -->
+<section class="page">
+  <div class="kicker">12월 결산 비상장 주식회사를 위한 실무 안내</div>
+  <h1>2027 사업연도 외부감사 준비 일정표</h1>
+  <p class="lead">감사인 선임부터 감사보고서 공시까지, 회사가 챙겨야 할 기한과 준비 자료를 한 장에 정리했습니다.
+  경리·재무 담당자분 자리에 두고 활용하시기 바랍니다.</p>
+
+  <div class="keys">
+    <div class="key main">
+      <div class="t">2027 사업연도 감사인 선임기한</div>
+      <div class="d">2027. 2. 15.(월)</div>
+      <div class="s">사업연도 개시일부터 45일 이내.<br>45일째인 2.14.이 일요일이라 다음 날까지</div>
+    </div>
+    <div class="key">
+      <div class="t">감사인 선임 보고</div>
+      <div class="d">계약 후 2주</div>
+      <div class="s">감사계약 체결일부터 2주 이내<br>증권선물위원회에 전자문서로 제출</div>
+    </div>
+    <div class="key">
+      <div class="t">처음 감사받는 회사</div>
+      <div class="d">2027. 4. 30.</div>
+      <div class="s">직전 사업연도에 감사를 받지 않은<br>회사는 개시일부터 4개월 이내</div>
+    </div>
+  </div>
+
+  <h2><span class="no">1</span>연간 일정과 회사가 할 일</h2>
+  <table class="tl">
+    <thead><tr><th style="width:24%">단계</th><th style="width:19%">시기</th><th>회사가 할 일</th><th style="width:13%">근거</th></tr></thead>
+    <tbody>
+      <tr class="hl"><td class="st"><span class="phase">선임</span><br>감사인 선정·계약</td><td class="when">2026.11 ~<br>2027.2.15</td>
+        <td>견적과 감사계획을 받아 검토한 뒤 감사(또는 감사위원회)가 감사인을 선정합니다.
+        감사보수·감사시간·투입 인력은 문서로 정해 둡니다.</td><td class="law">외감법 제10조<br>①·④·⑤</td></tr>
+      <tr class="hl"><td class="st">선임 보고·통지</td><td class="when">계약일부터<br>2주 이내</td>
+        <td>감사계약서 사본 등을 증권선물위원회에 제출합니다(감사인도 따로 제출).
+        감사인을 바꾼 경우 변경 사유와 전기 감사인의 의견진술 내용을 함께 냅니다.
+        주주에게는 통지·홈페이지 공고 또는 정기총회 보고로 알립니다.</td><td class="law">외감법 제12조<br>시행령 제18조</td></tr>
+      <tr><td class="st"><span class="phase">기중</span><br>감사계획·중간감사</td><td class="when">2027 하반기</td>
+        <td>사업 현황과 내부통제를 설명하고, 기말 실사·결산 일정을 감사인과 미리 맞춥니다.</td><td class="law"></td></tr>
+      <tr><td class="st">기말 실사·조회</td><td class="when">2027.12.31<br>전후</td>
+        <td>재고자산 실사(감사인 입회), 금융기관·거래처 조회서 발송에 협조합니다.</td><td class="law"></td></tr>
+      <tr><td class="st"><span class="phase">기말</span><br>재무제표 제출</td><td class="when">정기총회<br>6주 전</td>
+        <td>회사가 작성한 재무제표를 감사인에게 제출합니다. 재무제표 작성 책임은 회사(대표이사·회계담당 임원)에 있습니다.</td><td class="law">외감법 제6조<br>시행령 제8조</td></tr>
+      <tr><td class="st">감사보고서 수령</td><td class="when">정기총회<br>1주 전</td>
+        <td>감사인이 감사보고서를 회사(감사)에 제출합니다.</td><td class="law">시행령 제27조①</td></tr>
+      <tr><td class="st">정기총회·공시</td><td class="when">총회 후<br>2주 이내</td>
+        <td>감사인이 감사보고서를 증권선물위원회·한국공인회계사회에 제출하고 DART에 공시됩니다.
+        총회 승인 재무제표가 감사받은 재무제표와 다르면 회사가 2주 이내에 따로 제출합니다.</td><td class="law">외감법 제23조<br>시행령 제27조③⑤</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="no">2</span>미리 챙겨 두면 결산이 빨라지는 자료</h2>
+  <ul class="check">
+    <li><b>재고자산 수불부</b> <span>· 기말 실사 계획(일자·장소·품목)</span></li>
+    <li><b>금융기관 거래 목록</b> <span>· 예금, 차입금, 담보, 지급보증</span></li>
+    <li><b>거래처별 채권·채무 잔액</b> <span>· 장기 미회수 채권 내역</span></li>
+    <li><b>유형자산 대장</b> <span>· 취득·처분 증빙, 리스·임차 계약서</span></li>
+    <li><b>특수관계자 거래 내역</b> <span>· 자금 대여, 매출·매입, 지급보증</span></li>
+    <li><b>소송·약정 현황</b> <span>· 진행 중인 소송, 주요 계약</span></li>
+    <li><b>이사회·주주총회 의사록</b> <span>· 당기 결의 사항 전체</span></li>
+    <li><b>전기 감사보고서</b> <span>· 감사인을 바꾸는 경우 기초잔액 확인에 필요</span></li>
+  </ul>
+
+  <div class="note">
+    <div>「주식회사 등의 외부감사에 관한 법률」과 같은 법 시행령(2026년 10월 현행)을 기준으로 정리했습니다.
+    주권상장법인·대형비상장주식회사·금융회사, 감사위원회 설치 의무 회사, 회생절차 진행 회사, 감사인 지정 회사는 기한과 절차가 다릅니다.
+    정기총회일은 회사 정관과 일정에 따라 다릅니다.</div>
+    <div class="firm"><b>지인회계법인</b><br>070-8765-1910</div>
+  </div>
+</section>
+
+<!-- ========================= 뒷면 ========================= -->
+<section class="page back">
+  <div class="hero">
+    <div class="kicker">회사 소개</div>
+    <h1>비상장 회사 외부감사와 세무,<br>지인회계법인이 함께합니다</h1>
+    <p class="lead">2024년 대현회계법인에서 분할 설립했습니다. 경력 있는 공인회계사가 처음부터 끝까지 직접 챙기는 감사를 지향합니다.</p>
+    <div class="stats">
+      <div class="stat"><div class="n">18<small>명</small></div><div class="l">상근 공인회계사</div></div>
+      <div class="stat"><div class="n">13<small>명</small></div><div class="l">경력 15년 이상</div></div>
+      <div class="stat"><div class="n">12<small>명</small></div><div class="l">회계감사 부문</div></div>
+      <div class="stat"><div class="n">6<small>명</small></div><div class="l">세무·경영자문 부문</div></div>
+    </div>
+  </div>
+
+  <h2><span class="no">1</span>감사와 함께, 세무·자문도 한 곳에서</h2>
+  <p class="team-lead"><b>세무·경영자문 부문 회계사</b>가 함께 봅니다. 감사인을 다른 곳으로 정하셔도 세무·자문만 이용하실 수 있습니다.</p>
+  <div class="inds tax">
+    <div class="step"><div class="k">TAX 1</div><div class="h">법인세 신고·세무조정</div>
+      <p>결산 일정에 맞춰 세무조정과 신고를 진행하고, 놓치기 쉬운 손금·익금 항목을 점검합니다.</p></div>
+    <div class="step"><div class="k">TAX 2</div><div class="h">세액공제·감면 검토</div>
+      <p>연구·인력개발비, 통합고용, 통합투자 세액공제 등 적용 가능 여부와 누락분 경정청구를 검토합니다.</p></div>
+    <div class="step"><div class="k">TAX 3</div><div class="h">세무조사 대응</div>
+      <p>조사 통지 단계부터 자료 준비와 쟁점 정리, 조사 과정 대응을 함께합니다.</p></div>
+    <div class="step"><div class="k">TAX 4</div><div class="h">가업승계·지분 증여</div>
+      <p>가업승계 지원제도와 주식 증여 시기·방법을 검토해 세 부담을 미리 계산해 드립니다.</p></div>
+  </div>
+  <div class="free"><span class="badge">무료 진단</span>
+    <span>세액공제 누락 여부와 세무 현안을 <b>1회 무료로 검토</b>해 드립니다. 감사인 선임 여부와 관계없이 신청하세요.</span></div>
+  <p class="fine">저희가 감사하는 회사에는 공인회계사법 제21조에 따라 제공하지 않는 업무(재무제표 작성, 매매 목적 실사·가치평가 등)가 있으며, 그 밖의 업무도 회사 감사와 협의 후 수행합니다.</p>
+
+  <h2><span class="no">2</span>감사는 이렇게 진행합니다</h2>
+  <div class="steps">
+    <div class="step"><div class="k">STEP 1</div><div class="h">사전 미팅·계획 합의</div>
+      <p>사업 구조와 결산 체계를 듣고, 인력·일정·요청 자료를 미리 드려 결산 업무와 겹치지 않게 합니다.</p></div>
+    <div class="step"><div class="k">STEP 2</div><div class="h">No Surprise 원칙</div>
+      <p>쟁점은 발견 즉시 공유하고 기말 전에 함께 정리해, 결산 막바지에 갑작스러운 이슈가 없도록 합니다.</p></div>
+    <div class="step"><div class="k">STEP 3</div><div class="h">데이터 분석 점검</div>
+      <p>전표 데이터 분석과 벤포드 법칙 등 통계 기법으로 자금 유용·횡령의 이상 징후를 살핍니다.</p></div>
+    <div class="step"><div class="k">STEP 4</div><div class="h">결과 설명</div>
+      <p>파트너가 경영진께 감사 결과와 내부관리 개선 의견을 직접 설명드립니다.</p></div>
+  </div>
+  <p class="fine">견적과 감사계획 제안은 무료이며 계약 의무가 없습니다. 감사인을 바꾸실 때는 선임 보고 서류 준비를 안내해 드리고, 전기 감사인과의 협의도 저희가 진행합니다.
+  감사 결과는 품질관리 전담부서가 독립적으로 검토합니다.</p>
+
+  <h2><span class="no">3</span>지인회계법인이 감사하는 회사 <small class="h2s">2026년 감사보고서 기준 일부 · 가나다순</small></h2>
+  <div class="chips"><span class="chip">미래중공업</span><span class="chip">미래해운</span><span class="chip">셀트리온홀딩스</span><span class="chip">에이치엠옵틱스</span><span class="chip">엘케이하이테크</span><span class="chip">익수제약</span><span class="chip">케이씨씨모빌리티</span><span class="chip">케이씨씨정보통신</span><span class="chip">케이씨씨홀딩스</span><span class="chip">케이에프씨코리아</span><span class="chip">플러스렌터카</span><span class="chip">한국건드릴</span></div>
+
+  <h2><span class="no">4</span>담당 공인회계사</h2>
+  <p class="team-lead"><b>금융회사 근무 경험</b>을 갖춘 회계사가 직접 담당해, 감사보고서가 여신 심사에서 어떻게 읽히는지까지 챙깁니다.</p>
+  <div class="people">
+    <div class="person"><div class="r">사업책임자 · 공인회계사 (2013년 등록)</div><div class="nm">이재강</div>
+      <ul><li>제조업 · 프랜차이즈 · 건설업 외부감사</li><li>IT·소프트웨어 기업 재무실사</li><li>금융회사 근무 경력</li></ul></div>
+    <div class="person"><div class="r">공인회계사</div><div class="nm">김관우</div>
+      <ul><li>제조업 · 프랜차이즈 · 건설업 외부감사</li><li>IT·소프트웨어 기업 재무실사</li><li>금융회사 근무 경력</li></ul></div>
+  </div>
+
+  <div class="contact">
+    <div><div class="nm">지인회계법인</div>
+      <div class="ad">서울특별시 강남구 테헤란로103길 6, 5층 (삼성동)</div></div>
+    <div class="tel">대표전화 <b>070-8765-1910</b><br>담당 이재강 공인회계사 · 010-6624-2061<br>ljkdlworkd@gmail.com</div>
+  </div>
+</section>
+
+<script>
+// 넘침 점검: 페이지 내용이 높이를 넘으면 body에 data-overflow 기록
+addEventListener("load", () => {
+  const r = [...document.querySelectorAll(".page")].map(p => p.scrollHeight - p.clientHeight);
+  document.body.setAttribute("data-overflow", r.join(","));
+});
+</script>
+</body>
+</html>

@@ -15,3 +15,5 @@ __pycache__/
 ~$*
 커버레터*.docx
 주소라벨*.docx
+zipcode_cache.csv
+동봉자료*.pdf

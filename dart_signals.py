@@ -634,21 +634,23 @@ def add_stage1(df, filings, cfg):
     pts["p_정정"] = np.where(df["기재정정"], w["correction"], 0)
     pts["p_지연"] = np.where(df["제출지연일"] >= cfg["late_days"], w["late"], 0)
 
-    def prox(addr):
-        if not isinstance(addr, str):
-            return 0, ""
-        for pat, p in cfg["proximity"]:
-            if pat in addr:
-                return p, pat
-        return 0, ""
-
-    pr = df["주소"].map(prox)
+    pr = df["주소"].map(lambda a: prox(a, cfg))
     pts["p_근접"] = [p for p, _ in pr]
     df["근접지역"] = [lab for _, lab in pr]
 
     for c in pts.columns:
         df[c] = pts[c].astype(float).round(1)
     return df
+
+
+def prox(addr, cfg):
+    """주소 → (근접 가점, 지역명)"""
+    if not isinstance(addr, str):
+        return 0, ""
+    for pat, p in cfg["proximity"]:
+        if pat in addr:
+            return p, pat
+    return 0, ""
 
 
 # ----------------------------------------------------------------------------
@@ -660,6 +662,15 @@ NAME_STOP = {"이사회", "귀중", "귀하", "변경", "선임", "사임", "취
 # 재무제표 표지의 '○○ 주식회사 대표이사 홍길동 본점 소재지' 에서만 읽는다.
 # 본문의 다른 '대표이사'는 감사인(회계법인) 대표이사 서명이거나 특수관계자 표라서 쓰지 않는다.
 CEO_RE = re.compile(r"대\s*표\s*이\s*사\s*[:：]?\s*(.{2,60}?)\s*본\s*점\s*소\s*재\s*지")
+# 같은 표지의 '본점 소재지 : (도로명주소) 서울특별시 ... (전 화) 02-...'. 기업개황 주소보다 최신이다
+# (2026.10 점검: 상위 150곳 중 53곳이 기업개황 주소와 달랐다 = 이사)
+ADDR_RE = re.compile(r"본\s*점\s*소\s*재\s*지\s*[:：]?\s*(?:\(\s*도\s*로\s*명\s*주\s*소\s*\))?\s*(.{5,150}?)\s*\(\s*전\s*화")
+
+
+def extract_addr(text):
+    """표지의 본점 소재지. 못 찾으면 ''"""
+    m = ADDR_RE.search(text[:15000])
+    return m.group(1).strip(" ,:") if m else ""
 
 
 def zip_texts(path, rcept_no):
@@ -847,8 +858,26 @@ def load_stage2_cache():
     if STAGE2_CACHE.exists():
         c = read_table(STAGE2_CACHE)
         if "ver" in c and (c["ver"] == STAGE2_VER).all():
-            return c.set_index("rcept_no")
+            return fill_cover_addr(c.set_index("rcept_no"))
     return pd.DataFrame()
+
+
+def fill_cover_addr(c):
+    """예전 캐시(본점 소재지 판독 전)에 'addr'를 채운다. 받아 둔 원문만 읽고 API는 쓰지 않는다"""
+    if "addr" not in c:
+        c["addr"] = pd.Series(np.nan, index=c.index, dtype=object)
+    todo = [r for r in c.index[c["addr"].isna()] if (CACHE_DIR / f"{r}.zip").exists()]
+    if not todo:
+        return c
+    print(f"[2단계] 원문 표지에서 본점 소재지 읽기 {len(todo)}건 (최초 1회)")
+    for rno in todo:
+        try:
+            c.at[rno, "addr"] = extract_addr(zip_texts(CACHE_DIR / f"{rno}.zip", rno)[0]) or "-"
+        except (zipfile.BadZipFile, OSError):
+            c.at[rno, "addr"] = "-"
+    out = c.reset_index()
+    safe_write(lambda p: out.to_csv(p, index=False, encoding="utf-8-sig"), STAGE2_CACHE)
+    return c
 
 
 def run_stage2(df, cfg, n):
@@ -878,14 +907,15 @@ def run_stage2(df, cfg, n):
                 print(f"  ! {rno} 다운로드 실패: {e}")
                 continue
             if path is None:
-                cache[rno] = {"opinion": f"원문없음({st})", "going_concern": "", "ceo": ""}
+                cache[rno] = {"opinion": f"원문없음({st})", "going_concern": "", "ceo": "", "addr": "-"}
                 continue
         try:
             main, _ = zip_texts(path, rno)
             op, gc = read_opinion(main)
-            cache[rno] = {"opinion": op, "going_concern": str(gc), "ceo": extract_ceo(main)}
+            cache[rno] = {"opinion": op, "going_concern": str(gc), "ceo": extract_ceo(main),
+                          "addr": extract_addr(main) or "-"}
         except (zipfile.BadZipFile, OSError) as e:
-            cache[rno] = {"opinion": f"판독실패({type(e).__name__})", "going_concern": "", "ceo": ""}
+            cache[rno] = {"opinion": f"판독실패({type(e).__name__})", "going_concern": "", "ceo": "", "addr": "-"}
         if i % 50 == 0:
             print(f"  {i}/{len(need)}")
 
@@ -902,6 +932,13 @@ def apply_stage2(df, cache, cfg):
     df["계속기업불확실성"] = [str(get(r, "going_concern")) == "True" for r in df["접수번호"]]
     df["대표이사_원문"] = [get(r, "ceo") for r in df["접수번호"]]
     df["대표이사_전년원문"] = [get(r, "ceo") for r in df["접수번호_전년"]]
+
+    # 표지의 본점 소재지가 있으면 그 주소로 근접 가점을 다시 매긴다 (기업개황 주소는 이사 전 주소인 경우가 많다)
+    df["주소_원문"] = [v if isinstance(v := get(r, "addr"), str) and v != "-" else "" for r in df["접수번호"]]
+    addr = df["주소_원문"].where(df["주소_원문"] != "", df["주소"])
+    pr = addr.map(lambda a: prox(a, cfg))
+    df["p_근접"] = [float(p) for p, _ in pr]
+    df["근접지역"] = [lab for _, lab in pr]
 
     def names(v):
         return set(v.split(",")) - {""} if isinstance(v, str) else set()
@@ -974,7 +1011,7 @@ def finalize(df, cfg):
 
 TOP_COLS = ["순위", "회사명", "corp_code", "신호점수", "신호요약", "자산_억", "매출_억", "감사시간", "예측대비배수",
             "감사시간증가율%", "표준업종", "최소표준감사시간", "표준시간대비", "표준시간비고", "감사인", "감사인구분", "감사인_전년", "감사인_전전년",
-            "감사인교체횟수", "기재정정", "제출일", "제출일_전년", "제출지연일", "근접지역", "주소", "대표자",
+            "감사인교체횟수", "기재정정", "제출일", "제출일_전년", "제출지연일", "근접지역", "주소", "주소_원문", "대표자",
             "대표이사_원문", "대표이사_전년원문", "대표이사변경", "감사의견", "계속기업불확실성", "접수번호"]
 
 
@@ -1033,18 +1070,21 @@ def write_mailing(df, cfg):
 
     cover = top["대표이사_원문"] if "대표이사_원문" in top else pd.Series(np.nan, index=top.index)
     cover = cover.astype(object).where(cover.fillna("").ne("")).str.replace(",", ", ")
+    addr = top["주소_원문"] if "주소_원문" in top else pd.Series(np.nan, index=top.index)
+    addr = addr.astype(object).where(addr.fillna("").ne(""))
     std = top["최소표준감사시간"]
     m = pd.DataFrame({
         "순위": top["순위"], "회사명": top["회사명"],
         "대표자": cover.fillna(top["대표자"]),            # 원문 표지 우선 (기업개황은 오래된 경우가 많다)
-        "주소": top["주소"], "전화": get("전화"), "팩스": get("팩스"), "홈페이지": get("홈페이지"),
+        "주소": addr.fillna(top["주소"]),                 # 원문 표지 본점 소재지 우선 (없으면 기업개황)
+        "전화": get("전화"), "팩스": get("팩스"), "홈페이지": get("홈페이지"),
         "현감사인": top["감사인"], "감사인구분": top["감사인구분"],
         "자산(억)": top["자산_억"], "매출(억)": top["매출_억"],
         "감사시간": top["감사시간"], "예측대비배수": top["예측대비배수"],
         "표준업종": top.get("표준업종"), "최소표준시간": std, "초도감사반영시간": (std * 1.10).round(),
         "표준시간대비": top.get("표준시간대비"), "표준시간비고": top.get("표준시간비고"),
         "신호점수": top["신호점수"], "신호요약": top["신호요약"],
-        "대표이사변경": top.get("대표이사변경"), "대표자_기업개황": top["대표자"],
+        "대표이사변경": top.get("대표이사변경"), "대표자_기업개황": top["대표자"], "주소_기업개황": top["주소"],
         "접수번호": top["접수번호"], "corp_code": top["corp_code"],
     })
     for col in TRACK_COLS:
@@ -1067,9 +1107,9 @@ def write_mailing(df, cfg):
             m.to_excel(xw, sheet_name="발송명단", index=False)
             pd.DataFrame({"주의": [
                 "서면(커버레터)에 현 감사인 비교, 감사시간 과다, 보수 절감액을 쓰지 말 것. 감사시간·배수·표준시간은 내부 타깃팅과 통화·미팅 준비용.",
-                "대표자는 감사보고서 원문 표지 기준(없으면 기업개황). 발송 전 확인할 것.",
+                "대표자·주소는 감사보고서 원문 표지 기준(없으면 기업개황). 기업개황은 이사·대표 변경이 늦게 반영된다. 발송 전 확인할 것.",
                 "최소표준시간은 2026 적용률 기준. 자산 200억 미만은 적용 면제라 빈칸. '매출 미확인'은 하한값.",
-                "우편번호는 DART에 없음.",
+                "우편번호는 DART에 없음 → python add_zipcode.py (도로명주소 API).",
             ]}).to_excel(xw, sheet_name="주의", index=False)
             ws = xw.sheets["발송명단"]
             ws.freeze_panes = "C2"
