@@ -222,8 +222,9 @@ def build_reply(doc, row):
     for item in REPLY_ITEMS:
         para(doc, f"☐  {item}", size=11, before=2)
 
-    para(doc, "담당자 정보", size=10.5, bold=True, before=10, after=3)
-    fields = [("성함 · 직위", ""), ("전화", ""), ("이메일", ""),
+    # '담당자'만 쓰면 지인회계법인 담당자로 읽혀 우리 연락처를 적어 보낸 회신이 있었다 (10.19) → '귀사'를 명시
+    para(doc, "회신하시는 분 (귀사 담당자) 정보", size=10.5, bold=True, before=10, after=3)
+    fields = [("귀사 담당자\n성함 · 직위", ""), ("귀사 담당자 전화", ""), ("이메일", ""),
               ("연락 희망 시간", "☐ 오전     ☐ 오후     ☐ 언제든"), ("메모", "")]
     tb = doc.add_table(rows=len(fields), cols=2)
     tb.autofit = False
@@ -238,12 +239,12 @@ def build_reply(doc, row):
         if val:
             b.paragraphs[0].add_run(val)
 
-    para(doc, "보내실 곳", size=10.5, bold=True, before=10, after=2)
+    para(doc, "회신 받는 곳 (지인회계법인)", size=10.5, bold=True, before=10, after=2)
     if REPLY_FAX:
         para(doc, f"  팩스  {REPLY_FAX}", size=11)
     para(doc, f"  전화·문자(사진)  {REPLY_MOBILE}  ·  이메일  {REPLY_EMAIL}", size=11)
     para(doc, "  지인회계법인 담당 이재강 공인회계사", size=10)
-    para(doc, "적어 주신 담당자 정보는 회신 응대와 상담 연락에만 사용하며, 상담이 끝나면 파기합니다. "
+    para(doc, "적어 주신 귀사 담당자 정보는 회신 응대와 상담 연락에만 사용하며, 상담이 끝나면 파기합니다. "
               "'앞으로 안내를 원하지 않음'에 표시하시면 이후 연락드리지 않습니다.", size=8.5, before=8)
 
 
